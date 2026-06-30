@@ -54,8 +54,8 @@ export function RateVialModal({
                     fontWeight: 800,
                     border: "none",
                     cursor: "pointer",
-                    background: n <= rating ? "var(--pt-accent)" : "oklch(0.93 0.01 38)",
-                    color: n <= rating ? "white" : "oklch(0.5 0.02 225)",
+                    background: n <= rating ? "var(--pt-accent)" : "var(--pt-track)",
+                    color: n <= rating ? "white" : "var(--pt-muted)",
                   }}
                 >
                   {n}
@@ -85,7 +85,7 @@ export function RateVialModal({
                 color: "var(--pt-ink)",
                 resize: "vertical",
                 minHeight: 78,
-                background: "white",
+                background: "var(--pt-surface)",
               }}
             />
           </div>

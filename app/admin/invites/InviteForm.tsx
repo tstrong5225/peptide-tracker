@@ -51,8 +51,8 @@ export function InviteForm() {
               setTimeout(() => setCopied(false), 1500);
             }}
             style={{
-              background: "white",
-              border: "1.5px solid oklch(0.82 0.09 155)",
+              background: "var(--pt-surface)",
+              border: "1.5px solid var(--pt-success-border)",
               borderRadius: 9,
               padding: "6px 12px",
               fontSize: 12,

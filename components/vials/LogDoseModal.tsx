@@ -74,7 +74,7 @@ export function LogDoseModal({
               <span style={{ fontSize: 12, color: "var(--pt-accent-soft-fg)", fontWeight: 600 }}>
                 Draw on syringe
               </span>
-              <span style={{ fontSize: 22, fontWeight: 800, color: "oklch(0.40 0.19 38)", letterSpacing: "-0.02em" }}>
+              <span style={{ fontSize: 22, fontWeight: 800, color: "var(--pt-accent-deep)", letterSpacing: "-0.02em" }}>
                 {unitsDisplay.toFixed(1)} <span style={{ fontSize: 12, fontWeight: 600 }}>units</span>
               </span>
             </div>
@@ -84,7 +84,7 @@ export function LogDoseModal({
             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
               <label className={formStyles.label}>Injection Site</label>
               {lastSite ? (
-                <span style={{ fontSize: 12, color: "oklch(0.58 0.02 225)" }}>
+                <span style={{ fontSize: 12, color: "var(--pt-muted-2)" }}>
                   Last: <strong style={{ color: "var(--pt-accent-soft-fg)" }}>{lastSite}</strong>
                 </span>
               ) : null}
@@ -110,8 +110,8 @@ export function LogDoseModal({
                     style={{
                       fontSize: 11,
                       fontWeight: 600,
-                      color: "oklch(0.55 0.02 225)",
-                      background: "oklch(0.93 0.01 38)",
+                      color: "var(--pt-muted)",
+                      background: "var(--pt-track)",
                       padding: "2px 9px",
                       borderRadius: 99,
                     }}
@@ -138,7 +138,7 @@ export function LogDoseModal({
                 color: "var(--pt-ink)",
                 resize: "vertical",
                 minHeight: 78,
-                background: "white",
+                background: "var(--pt-surface)",
               }}
             />
           </div>
@@ -146,12 +146,12 @@ export function LogDoseModal({
           {overLimit ? (
             <div
               style={{
-                background: "oklch(0.94 0.06 25)",
-                border: "1.5px solid oklch(0.87 0.10 25)",
+                background: "var(--pt-danger-bg)",
+                border: "1.5px solid var(--pt-danger-border)",
                 borderRadius: 12,
                 padding: "12px 15px",
                 fontSize: 13,
-                color: "oklch(0.38 0.18 25)",
+                color: "var(--pt-danger-icon)",
                 fontWeight: 600,
                 lineHeight: 1.5,
               }}

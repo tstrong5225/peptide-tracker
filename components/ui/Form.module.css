@@ -19,7 +19,7 @@
   border-radius: 11px;
   font-size: 14px;
   color: var(--pt-ink);
-  background: white;
+  background: var(--pt-surface);
 }
 
 .error {
@@ -34,7 +34,7 @@
 
 .success {
   background: var(--pt-success-bg);
-  border: 1.5px solid oklch(0.82 0.09 155);
+  border: 1.5px solid var(--pt-success-border);
   color: var(--pt-success-fg);
   border-radius: 11px;
   padding: 10px 14px;
@@ -54,13 +54,13 @@
 }
 
 .buttonPrimary:disabled {
-  background: oklch(0.76 0.06 222);
+  background: var(--pt-disabled-bg);
   cursor: not-allowed;
 }
 
 .buttonSecondary {
-  background: oklch(0.95 0.007 222);
-  color: oklch(0.40 0.02 225);
+  background: var(--pt-surface-soft);
+  color: var(--pt-surface-soft-fg);
   border: none;
   border-radius: 13px;
   padding: 13px;

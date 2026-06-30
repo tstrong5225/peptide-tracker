@@ -1,7 +1,7 @@
 .card {
-  background: white;
+  background: var(--pt-surface);
   border-radius: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 18px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--pt-card-shadow);
   padding: 20px;
   display: flex;
   flex-direction: column;
@@ -26,7 +26,7 @@
 
 .deviceLine {
   font-size: 12px;
-  color: oklch(0.55 0.02 225);
+  color: var(--pt-muted);
   margin-top: 2px;
   font-weight: 500;
 }
@@ -40,7 +40,7 @@
 
 .batchLine {
   font-size: 11px;
-  color: oklch(0.6 0.02 225);
+  color: var(--pt-muted-2);
   margin-top: 1px;
   font-weight: 500;
 }
@@ -78,7 +78,7 @@
 .barLabel {
   font-size: 11px;
   font-weight: 700;
-  color: oklch(0.55 0.02 225);
+  color: var(--pt-muted);
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
@@ -90,7 +90,7 @@
 
 .barTrack {
   height: 8px;
-  background: oklch(0.93 0.01 38);
+  background: var(--pt-track);
   border-radius: 99px;
   overflow: hidden;
 }
@@ -116,7 +116,7 @@
 .statLabel {
   font-size: 10px;
   font-weight: 700;
-  color: oklch(0.55 0.02 225);
+  color: var(--pt-muted);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   margin-bottom: 3px;
@@ -131,7 +131,7 @@
 .statUnit {
   font-size: 11px;
   font-weight: 500;
-  color: oklch(0.55 0.02 225);
+  color: var(--pt-muted);
 }
 
 .costBox {
@@ -154,7 +154,7 @@
 .costValue {
   font-size: 17px;
   font-weight: 800;
-  color: oklch(0.4 0.19 38);
+  color: var(--pt-accent-deep);
   letter-spacing: -0.02em;
 }
 
@@ -170,7 +170,7 @@
 .effectLabel {
   font-size: 11px;
   font-weight: 700;
-  color: oklch(0.55 0.02 225);
+  color: var(--pt-muted);
   text-transform: uppercase;
   letter-spacing: 0.06em;
 }
@@ -183,7 +183,7 @@
 
 .lastDose {
   font-size: 12px;
-  color: oklch(0.58 0.02 225);
+  color: var(--pt-muted-2);
 }
 
 .actionsRow {
@@ -216,8 +216,8 @@
 }
 
 .btnIcon {
-  background: white;
-  color: oklch(0.52 0.02 225);
+  background: var(--pt-surface);
+  color: var(--pt-muted);
   border: 1.5px solid var(--pt-border);
   border-radius: 10px;
   padding: 9px 11px;
@@ -227,5 +227,5 @@
 }
 
 .btnIconDanger {
-  color: oklch(0.52 0.18 22);
+  color: var(--pt-danger-fg);
 }

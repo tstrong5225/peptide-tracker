@@ -25,7 +25,7 @@ export function ReorderModal({ items, onClose }: { items: ReorderItem[]; onClose
           key={i}
           style={{
             padding: "15px 26px",
-            borderBottom: "1px solid oklch(0.96 0.005 222)",
+            borderBottom: "1px solid var(--pt-divider)",
             display: "flex",
             alignItems: "center",
             gap: 12,
@@ -33,7 +33,7 @@ export function ReorderModal({ items, onClose }: { items: ReorderItem[]; onClose
         >
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 2 }}>{item.name}</div>
-            <div style={{ fontSize: 12, color: "oklch(0.58 0.02 225)" }}>{item.sub}</div>
+            <div style={{ fontSize: 12, color: "var(--pt-muted-2)" }}>{item.sub}</div>
           </div>
           <span
             style={{

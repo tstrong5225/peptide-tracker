@@ -21,7 +21,7 @@
 }
 
 .card {
-  background: white;
+  background: var(--pt-surface);
   border-radius: 22px;
   box-shadow: var(--pt-card-shadow);
   padding: 26px;
@@ -90,7 +90,7 @@
 
 .barTrack {
   height: 10px;
-  background: oklch(0.93 0.01 38);
+  background: var(--pt-track);
   border-radius: 99px;
   overflow: hidden;
 }
@@ -117,7 +117,7 @@
   background: var(--pt-accent-soft-bg);
   border-radius: 12px;
   padding: 13px 14px;
-  border: 2px solid oklch(0.86 0.08 222);
+  border: 2px solid var(--pt-info-border);
 }
 
 .statLabel {
@@ -138,7 +138,7 @@
 .costNote {
   margin-top: 9px;
   font-size: 12px;
-  color: oklch(0.6 0.02 225);
+  color: var(--pt-muted-2);
 }
 
 .cardTitle {
@@ -176,7 +176,7 @@
 
 .doseRow {
   padding: 15px 22px;
-  border-bottom: 1px solid oklch(0.96 0.005 222);
+  border-bottom: 1px solid var(--pt-divider);
   display: flex;
   align-items: flex-start;
   justify-content: space-between;

@@ -7,7 +7,7 @@
 }
 
 .card {
-  background: white;
+  background: var(--pt-surface);
   border-radius: 20px;
   box-shadow: var(--pt-card-shadow);
   padding: 52px 24px;

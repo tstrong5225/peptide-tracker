@@ -89,7 +89,7 @@ export function ReconCalcModal({
             style={{
               fontSize: 11,
               fontWeight: 700,
-              color: "oklch(0.40 0.13 222)",
+              color: "var(--pt-info-fg)",
               textTransform: "uppercase",
               letterSpacing: "0.06em",
               marginBottom: 14,
@@ -99,34 +99,34 @@ export function ReconCalcModal({
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 22, flexWrap: "wrap", marginBottom: 14 }}>
             <div>
-              <div style={{ fontSize: 52, fontWeight: 800, color: "oklch(0.40 0.19 38)", letterSpacing: "-0.03em", lineHeight: 1 }}>
+              <div style={{ fontSize: 52, fontWeight: 800, color: "var(--pt-accent-deep)", letterSpacing: "-0.03em", lineHeight: 1 }}>
                 {result.units}
               </div>
-              <div style={{ fontSize: 13, color: "oklch(0.45 0.11 222)", fontWeight: 600, marginTop: 2 }}>
+              <div style={{ fontSize: 13, color: "var(--pt-info-fg-soft)", fontWeight: 600, marginTop: 2 }}>
                 units to draw
               </div>
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
-              <div style={{ fontSize: 12, color: "oklch(0.45 0.11 222)" }}>{result.conc} mcg/mL concentration</div>
-              <div style={{ fontSize: 12, color: "oklch(0.45 0.11 222)" }}>{result.ml} mL per dose</div>
+              <div style={{ fontSize: 12, color: "var(--pt-info-fg-soft)" }}>{result.conc} mcg/mL concentration</div>
+              <div style={{ fontSize: 12, color: "var(--pt-info-fg-soft)" }}>{result.ml} mL per dose</div>
             </div>
           </div>
           <div
             style={{
-              borderTop: "1px solid oklch(0.84 0.07 222)",
+              borderTop: "1px solid var(--pt-info-divider)",
               paddingTop: 12,
               display: "flex",
               flexDirection: "column",
               gap: 4,
             }}
           >
-            <div style={{ fontSize: 10, fontWeight: 700, color: "oklch(0.50 0.11 222)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 3 }}>
+            <div style={{ fontSize: 10, fontWeight: 700, color: "var(--pt-info-fg-soft)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 3 }}>
               Calculation
             </div>
-            <div style={{ fontSize: 12, color: "oklch(0.48 0.11 222)" }}>① {result.step1}</div>
-            <div style={{ fontSize: 12, color: "oklch(0.48 0.11 222)" }}>② {result.step2}</div>
-            <div style={{ fontSize: 12, color: "oklch(0.48 0.11 222)" }}>③ {result.step3}</div>
-            <div style={{ fontSize: 12, color: "oklch(0.48 0.11 222)" }}>④ {result.step4}</div>
+            <div style={{ fontSize: 12, color: "var(--pt-info-fg-faint)" }}>① {result.step1}</div>
+            <div style={{ fontSize: 12, color: "var(--pt-info-fg-faint)" }}>② {result.step2}</div>
+            <div style={{ fontSize: 12, color: "var(--pt-info-fg-faint)" }}>③ {result.step3}</div>
+            <div style={{ fontSize: 12, color: "var(--pt-info-fg-faint)" }}>④ {result.step4}</div>
           </div>
         </div>
 

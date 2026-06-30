@@ -35,7 +35,7 @@ export function ConfirmDeleteModal({
           <svg width="26" height="26" viewBox="0 0 28 28" fill="none">
             <path
               d="M4 8h20M9 8V5.5h10V8M11 13v8M17 13v8M5.5 8L7 22.5h14L22.5 8"
-              stroke="oklch(0.52 0.18 22)"
+              stroke="var(--pt-danger-deep)"
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -58,7 +58,7 @@ export function ConfirmDeleteModal({
             onClick={() => startTransition(async () => onConfirm())}
             style={{
               flex: 1,
-              background: "oklch(0.52 0.18 22)",
+              background: "var(--pt-danger-deep)",
               color: "white",
               border: "none",
               borderRadius: 12,

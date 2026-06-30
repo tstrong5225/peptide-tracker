@@ -7,8 +7,8 @@
 }
 
 .reorderAlert {
-  background: oklch(0.95 0.06 25);
-  border: 1.5px solid oklch(0.87 0.12 25);
+  background: var(--pt-danger-bg);
+  border: 1.5px solid var(--pt-danger-border);
   border-radius: 14px;
   padding: 13px 18px;
   margin-bottom: 18px;
@@ -22,7 +22,7 @@
   flex: 1;
   font-size: 13px;
   font-weight: 700;
-  color: oklch(0.4 0.18 25);
+  color: var(--pt-danger-fg);
 }
 
 .reorderLink {
@@ -34,11 +34,11 @@
 }
 
 .filterBar {
-  background: white;
+  background: var(--pt-surface);
   border-radius: 16px;
   padding: 16px 20px;
   margin-bottom: 20px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--pt-card-shadow);
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
@@ -48,7 +48,7 @@
 .filterLabel {
   font-size: 12px;
   font-weight: 700;
-  color: oklch(0.52 0.02 225);
+  color: var(--pt-muted);
   text-transform: uppercase;
   letter-spacing: 0.06em;
   width: 100%;
@@ -68,14 +68,14 @@
   border-radius: 9px;
   font-size: 13px;
   color: var(--pt-ink);
-  background: white;
+  background: var(--pt-surface);
   min-width: 140px;
   flex: 1;
 }
 
 .clearFilter {
-  background: oklch(0.93 0.06 25);
-  color: oklch(0.44 0.18 25);
+  background: var(--pt-danger-bg);
+  color: var(--pt-danger-fg);
   border: none;
   border-radius: 9px;
   padding: 8px 14px;

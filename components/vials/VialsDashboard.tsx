@@ -119,17 +119,13 @@ export function VialsDashboard({
         sub: [c.vial.vendor, c.vial.batch_number && `Batch: ${c.vial.batch_number}`].filter(Boolean).join(" · "),
         badgeLabel: reason,
         badgeBg:
-          c.exp?.state === "expired"
-            ? "oklch(0.93 0.07 22)"
-            : c.data.statusLabel === "Low"
-              ? "oklch(0.93 0.07 25)"
-              : "oklch(0.95 0.06 65)",
+          c.exp?.state === "expired" || c.data.statusLabel === "Low"
+            ? "var(--pt-danger-bg)"
+            : "var(--pt-warning-bg)",
         badgeFg:
-          c.exp?.state === "expired"
-            ? "oklch(0.45 0.18 22)"
-            : c.data.statusLabel === "Low"
-              ? "oklch(0.48 0.19 25)"
-              : "oklch(0.44 0.15 65)",
+          c.exp?.state === "expired" || c.data.statusLabel === "Low"
+            ? "var(--pt-danger-fg)"
+            : "var(--pt-warning-fg)",
       };
     });
 
@@ -192,9 +188,9 @@ export function VialsDashboard({
         {reorderItems.length > 0 ? (
           <div className={styles.reorderAlert} onClick={() => setShowReorderModal(true)}>
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-              <path d="M9 2L1.5 15.5h15L9 2z" stroke="oklch(0.48 0.19 25)" strokeWidth="1.6" fill="none" strokeLinejoin="round" />
-              <line x1="9" y1="7" x2="9" y2="11" stroke="oklch(0.48 0.19 25)" strokeWidth="1.5" strokeLinecap="round" />
-              <circle cx="9" cy="13.5" r="0.9" fill="oklch(0.48 0.19 25)" />
+              <path d="M9 2L1.5 15.5h15L9 2z" stroke="var(--pt-danger-fg)" strokeWidth="1.6" fill="none" strokeLinejoin="round" />
+              <line x1="9" y1="7" x2="9" y2="11" stroke="var(--pt-danger-fg)" strokeWidth="1.5" strokeLinecap="round" />
+              <circle cx="9" cy="13.5" r="0.9" fill="var(--pt-danger-fg)" />
             </svg>
             <div className={styles.reorderText}>
               {reorderItems.length} vial{reorderItems.length === 1 ? "" : "s"} need attention — low stock or nearing expiry.

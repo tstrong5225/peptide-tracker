@@ -98,6 +98,7 @@ export type ExpiryInfo = {
   label: string;
   bg: string;
   fg: string;
+  border: string;
 };
 
 export function getExpiry(
@@ -116,12 +117,12 @@ export function getExpiry(
   const daysSince = Math.round((now.getTime() - reconDate.getTime()) / 86400000);
 
   if (daysLeft <= 0) {
-    return { state: "expired", daysLeft, useByStr, reconStr, daysSince, label: `Expired ${Math.abs(daysLeft)}d ago`, bg: "oklch(0.93 0.07 22)", fg: "oklch(0.45 0.18 22)" };
+    return { state: "expired", daysLeft, useByStr, reconStr, daysSince, label: `Expired ${Math.abs(daysLeft)}d ago`, bg: "var(--pt-danger-bg)", fg: "var(--pt-danger-fg)", border: "var(--pt-danger-border)" };
   }
   if (daysLeft <= 7) {
-    return { state: "nearing", daysLeft, useByStr, reconStr, daysSince, label: `Exp. ${daysLeft}d`, bg: "oklch(0.95 0.06 65)", fg: "oklch(0.44 0.15 65)" };
+    return { state: "nearing", daysLeft, useByStr, reconStr, daysSince, label: `Exp. ${daysLeft}d`, bg: "var(--pt-warning-bg)", fg: "var(--pt-warning-fg)", border: "var(--pt-warning-border)" };
   }
-  return { state: "fresh", daysLeft, useByStr, reconStr, daysSince, label: `${daysLeft}d left`, bg: "oklch(0.91 0.07 155)", fg: "oklch(0.42 0.16 155)" };
+  return { state: "fresh", daysLeft, useByStr, reconStr, daysSince, label: `${daysLeft}d left`, bg: "var(--pt-success-bg)", fg: "var(--pt-success-fg)", border: "var(--pt-success-border)" };
 }
 
 export function getCostPerDose(vial: Pick<VialRow, "vial_cost" | "planned_dose_mcg" | "mg_in_vial">): string | null {
@@ -131,16 +132,16 @@ export function getCostPerDose(vial: Pick<VialRow, "vial_cost" | "planned_dose_m
 }
 
 export function badge(pct: number, lowThresholdPct: number): { bg: string; fg: string; label: string } {
-  if (pct <= 0) return { bg: "oklch(0.91 0.01 38)", fg: "oklch(0.45 0.02 225)", label: "Empty" };
-  if (pct <= lowThresholdPct) return { bg: "oklch(0.93 0.07 25)", fg: "oklch(0.48 0.19 25)", label: "Low" };
-  return { bg: "oklch(0.91 0.07 155)", fg: "oklch(0.42 0.16 155)", label: "Active" };
+  if (pct <= 0) return { bg: "var(--pt-neutral-bg)", fg: "var(--pt-neutral-fg)", label: "Empty" };
+  if (pct <= lowThresholdPct) return { bg: "var(--pt-danger-bg)", fg: "var(--pt-danger-fg)", label: "Low" };
+  return { bg: "var(--pt-success-bg)", fg: "var(--pt-success-fg)", label: "Active" };
 }
 
 export function barColor(pct: number, lowThresholdPct: number): string {
-  if (pct <= 0) return "oklch(0.78 0.02 222)";
-  if (pct <= lowThresholdPct) return "oklch(0.55 0.18 25)";
-  if (pct <= 50) return "oklch(0.65 0.15 65)";
-  return "oklch(0.60 0.20 38)";
+  if (pct <= 0) return "var(--pt-neutral-bar)";
+  if (pct <= lowThresholdPct) return "var(--pt-danger-fg)";
+  if (pct <= 50) return "var(--pt-warning-deep)";
+  return "var(--pt-accent)";
 }
 
 export type ReconResult = {

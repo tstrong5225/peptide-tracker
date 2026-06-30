@@ -1,3 +1,4 @@
+import { ThemeToggle } from "@/components/ThemeToggle";
 import styles from "./AuthShell.module.css";
 
 export function AuthShell({
@@ -16,6 +17,7 @@ export function AuthShell({
           <div className={styles.brandTitle}>Peptide Tracker</div>
           <div className={styles.brandSubtitle}>Vial Dosage Manager</div>
         </div>
+        <ThemeToggle />
       </header>
       <main className={styles.main}>
         <div className={styles.card}>

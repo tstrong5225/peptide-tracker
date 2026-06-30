@@ -171,7 +171,7 @@ export function VialDetail({
                 <div className={styles.statLabel} style={{ color: "var(--pt-accent-soft-fg)" }}>
                   Cost / Dose
                 </div>
-                <div className={styles.statValue} style={{ color: "oklch(0.40 0.19 38)" }}>
+                <div className={styles.statValue} style={{ color: "var(--pt-accent-deep)" }}>
                   ${cpd}
                 </div>
               </div>
@@ -180,7 +180,7 @@ export function VialDetail({
 
           {cpd ? (
             <div className={styles.costNote}>
-              Vial cost: <strong style={{ color: "oklch(0.38 0.02 225)" }}>${vial.vial_cost?.toFixed(2)}</strong> ·{" "}
+              Vial cost: <strong style={{ color: "var(--pt-ink)" }}>${vial.vial_cost?.toFixed(2)}</strong> ·{" "}
               {totalDosesEst} est. doses
             </div>
           ) : null}
@@ -193,11 +193,11 @@ export function VialDetail({
               <div className={styles.statBox}>
                 <div className={styles.statLabel}>Reconstituted On</div>
                 <div style={{ fontSize: 17, fontWeight: 800, marginBottom: 3 }}>{exp.reconStr}</div>
-                <div style={{ fontSize: 12, color: "oklch(0.6 0.02 225)" }}>{exp.daysSince} days ago</div>
+                <div style={{ fontSize: 12, color: "var(--pt-muted-2)" }}>{exp.daysSince} days ago</div>
               </div>
               <div
                 className={styles.statBox}
-                style={{ background: exp.bg, border: `2px solid ${exp.fg}22` }}
+                style={{ background: exp.bg, border: `2px solid ${exp.border}` }}
               >
                 <div className={styles.statLabel} style={{ color: exp.fg }}>
                   Use By
@@ -218,34 +218,38 @@ export function VialDetail({
                 </span>
               </div>
             </div>
-            <div
-              className={styles.fridgeNote}
-              style={{
-                background: exp.state === "fresh" ? "oklch(0.95 0.04 222)" : exp.bg,
-                border: `1.5px solid ${exp.fg}33`,
-              }}
-            >
-              <svg width="18" height="18" viewBox="0 0 18 18" fill="none" style={{ flexShrink: 0 }}>
-                <rect x="4" y="2" width="10" height="14" rx="3" stroke={exp.fg} strokeWidth="1.4" fill="none" />
-                <line x1="4" y1="7" x2="14" y2="7" stroke={exp.fg} strokeWidth="1.4" />
-                <line x1="9" y1="3.5" x2="9" y2="5.5" stroke={exp.fg} strokeWidth="1.4" strokeLinecap="round" />
-                <line x1="9" y1="10" x2="9" y2="13" stroke={exp.fg} strokeWidth="1.4" strokeLinecap="round" />
-              </svg>
-              <div>
-                <div style={{ fontSize: 13, fontWeight: 700, color: exp.fg }}>
-                  {exp.state === "expired"
-                    ? "Do not use — past stability window"
-                    : exp.state === "nearing"
-                      ? "Refrigeration critical"
-                      : "Store refrigerated at 2–8°C"}
+            {(() => {
+              const fridgeBg = exp.state === "fresh" ? "var(--pt-info-bg)" : exp.bg;
+              const fridgeBorder = exp.state === "fresh" ? "var(--pt-info-border)" : exp.border;
+              const fridgeFg = exp.state === "fresh" ? "var(--pt-info-fg)" : exp.fg;
+              return (
+                <div
+                  className={styles.fridgeNote}
+                  style={{ background: fridgeBg, border: `1.5px solid ${fridgeBorder}` }}
+                >
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" style={{ flexShrink: 0 }}>
+                    <rect x="4" y="2" width="10" height="14" rx="3" stroke={fridgeFg} strokeWidth="1.4" fill="none" />
+                    <line x1="4" y1="7" x2="14" y2="7" stroke={fridgeFg} strokeWidth="1.4" />
+                    <line x1="9" y1="3.5" x2="9" y2="5.5" stroke={fridgeFg} strokeWidth="1.4" strokeLinecap="round" />
+                    <line x1="9" y1="10" x2="9" y2="13" stroke={fridgeFg} strokeWidth="1.4" strokeLinecap="round" />
+                  </svg>
+                  <div>
+                    <div style={{ fontSize: 13, fontWeight: 700, color: fridgeFg }}>
+                      {exp.state === "expired"
+                        ? "Do not use — past stability window"
+                        : exp.state === "nearing"
+                          ? "Refrigeration critical"
+                          : "Store refrigerated at 2–8°C"}
+                    </div>
+                    <div style={{ fontSize: 11, color: fridgeFg, marginTop: 1, opacity: 0.8 }}>
+                      {exp.state === "expired"
+                        ? "Discard safely per local regulations"
+                        : `Stable for ${vial.stability_days || 28} days after reconstitution`}
+                    </div>
+                  </div>
                 </div>
-                <div style={{ fontSize: 11, color: exp.fg, marginTop: 1, opacity: 0.8 }}>
-                  {exp.state === "expired"
-                    ? "Discard safely per local regulations"
-                    : `Stable for ${vial.stability_days || 28} days after reconstitution`}
-                </div>
-              </div>
-            </div>
+              );
+            })()}
           </div>
         ) : null}
 
@@ -265,7 +269,7 @@ export function VialDetail({
                   flexShrink: 0,
                 }}
               >
-                <span style={{ fontSize: 26, fontWeight: 800, color: "oklch(0.44 0.16 38)", letterSpacing: "-0.02em" }}>
+                <span style={{ fontSize: 26, fontWeight: 800, color: "var(--pt-accent-soft-fg)", letterSpacing: "-0.02em" }}>
                   {vial.effectiveness}
                 </span>
               </div>
@@ -298,13 +302,13 @@ export function VialDetail({
                     </span>
                     <span className={styles.doseSiteBadge}>{dose.site}</span>
                   </div>
-                  <div style={{ fontSize: 12, color: "oklch(0.6 0.02 225)" }}>
+                  <div style={{ fontSize: 12, color: "var(--pt-muted-2)" }}>
                     {new Date(dose.logged_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}{" "}
                     ·{" "}
                     {new Date(dose.logged_at).toLocaleTimeString("en-US", { hour: "numeric", minute: "2-digit" })}
                   </div>
                   {dose.notes ? (
-                    <div style={{ fontSize: 13, color: "oklch(0.48 0.02 225)", marginTop: 5, lineHeight: 1.5, fontStyle: "italic" }}>
+                    <div style={{ fontSize: 13, color: "var(--pt-muted)", marginTop: 5, lineHeight: 1.5, fontStyle: "italic" }}>
                       &ldquo;{dose.notes}&rdquo;
                     </div>
                   ) : null}
@@ -321,7 +325,7 @@ export function VialDetail({
                     background: "none",
                     border: "none",
                     cursor: "pointer",
-                    color: "oklch(0.72 0.02 225)",
+                    color: "var(--pt-muted-2)",
                     padding: 6,
                     borderRadius: 8,
                     flexShrink: 0,

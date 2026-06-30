@@ -1,7 +1,7 @@
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(10, 20, 45, 0.5);
+  background: var(--pt-overlay);
   backdrop-filter: blur(5px);
   display: flex;
   align-items: center;
@@ -11,12 +11,12 @@
 }
 
 .card {
-  background: white;
+  background: var(--pt-surface);
   border-radius: 26px;
   width: 100%;
   max-height: 92vh;
   overflow-y: auto;
-  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.22);
+  box-shadow: var(--pt-modal-shadow);
   animation: fadeUp 0.25s ease;
 }
 

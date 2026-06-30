@@ -46,7 +46,7 @@
 
 .table td {
   padding: 10px;
-  border-bottom: 1px solid oklch(0.96 0.005 222);
+  border-bottom: 1px solid var(--pt-divider);
 }
 
 .badge {
@@ -62,6 +62,6 @@
 }
 
 .badgeUsed {
-  background: oklch(0.91 0.01 38);
-  color: oklch(0.45 0.02 225);
+  background: var(--pt-neutral-bg);
+  color: var(--pt-neutral-fg);
 }

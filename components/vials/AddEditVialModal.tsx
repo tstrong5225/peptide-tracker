@@ -152,7 +152,7 @@ export function AddEditVialModal({
                   style={{
                     fontSize: 11,
                     fontWeight: 700,
-                    color: "oklch(0.52 0.02 225)",
+                    color: "var(--pt-muted)",
                     textTransform: "uppercase",
                     letterSpacing: "0.06em",
                   }}
@@ -207,7 +207,7 @@ export function AddEditVialModal({
               </div>
             ) : null}
             {selectedHint ? (
-              <div style={{ fontSize: 11, color: "oklch(0.52 0.10 222)", marginTop: 6, fontWeight: 600 }}>
+              <div style={{ fontSize: 11, color: "var(--pt-info-fg-soft)", marginTop: 6, fontWeight: 600 }}>
                 {selectedHint}
               </div>
             ) : null}
@@ -234,7 +234,7 @@ export function AddEditVialModal({
                 style={{
                   fontSize: 11,
                   fontWeight: 700,
-                  color: "oklch(0.40 0.13 222)",
+                  color: "var(--pt-info-fg)",
                   textTransform: "uppercase",
                   letterSpacing: "0.06em",
                   marginBottom: 12,
@@ -244,19 +244,19 @@ export function AddEditVialModal({
               </div>
               <div style={{ display: "flex", gap: 22, flexWrap: "wrap", alignItems: "center" }}>
                 <div>
-                  <div style={{ fontSize: 11, color: "oklch(0.45 0.11 222)", fontWeight: 600, marginBottom: 2 }}>
+                  <div style={{ fontSize: 11, color: "var(--pt-info-fg-soft)", fontWeight: 600, marginBottom: 2 }}>
                     mcg per mL
                   </div>
-                  <div style={{ fontSize: 26, fontWeight: 800, color: "oklch(0.40 0.19 38)", letterSpacing: "-0.02em" }}>
+                  <div style={{ fontSize: 26, fontWeight: 800, color: "var(--pt-accent-deep)", letterSpacing: "-0.02em" }}>
                     {mcgPerMl.toFixed(2)}
                   </div>
                 </div>
-                <div style={{ width: 1, height: 36, background: "oklch(0.84 0.07 222)" }} />
+                <div style={{ width: 1, height: 36, background: "var(--pt-info-divider)" }} />
                 <div>
-                  <div style={{ fontSize: 11, color: "oklch(0.45 0.11 222)", fontWeight: 600, marginBottom: 2 }}>
+                  <div style={{ fontSize: 11, color: "var(--pt-info-fg-soft)", fontWeight: 600, marginBottom: 2 }}>
                     units per planned dose
                   </div>
-                  <div style={{ fontSize: 26, fontWeight: 800, color: "oklch(0.40 0.19 38)", letterSpacing: "-0.02em" }}>
+                  <div style={{ fontSize: 26, fontWeight: 800, color: "var(--pt-accent-deep)", letterSpacing: "-0.02em" }}>
                     {unitsPerDose.toFixed(1)}
                   </div>
                 </div>
@@ -264,12 +264,12 @@ export function AddEditVialModal({
             </div>
           ) : null}
 
-          <div style={{ borderTop: "1.5px solid oklch(0.94 0.005 222)", paddingTop: 16 }}>
+          <div style={{ borderTop: "1.5px solid var(--pt-divider)", paddingTop: 16 }}>
             <div
               style={{
                 fontSize: 12,
                 fontWeight: 700,
-                color: "oklch(0.52 0.02 225)",
+                color: "var(--pt-muted)",
                 textTransform: "uppercase",
                 letterSpacing: "0.06em",
                 marginBottom: 13,
@@ -315,12 +315,12 @@ export function AddEditVialModal({
             </div>
           </div>
 
-          <div style={{ borderTop: "1.5px solid oklch(0.94 0.005 222)", paddingTop: 16 }}>
+          <div style={{ borderTop: "1.5px solid var(--pt-divider)", paddingTop: 16 }}>
             <div
               style={{
                 fontSize: 12,
                 fontWeight: 700,
-                color: "oklch(0.52 0.02 225)",
+                color: "var(--pt-muted)",
                 textTransform: "uppercase",
                 letterSpacing: "0.06em",
                 marginBottom: 13,

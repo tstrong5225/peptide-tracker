@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "@/app/actions";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import styles from "./AppHeader.module.css";
 
 const NAV = [
@@ -51,6 +52,7 @@ export function AppHeader({
         </nav>
         {context}
         <div className={styles.right}>
+          <ThemeToggle />
           <span className={styles.email}>{email}</span>
           <form action={signOut}>
             <button type="submit" className={styles.signOut}>
