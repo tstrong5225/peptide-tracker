@@ -1,17 +1,18 @@
-import { AppHeader } from "@/components/AppHeader";
-import { ComingSoon } from "@/components/ComingSoon";
 import { getCurrentUserOrRedirect } from "@/lib/get-current-user";
+import { ExportPage } from "@/components/export/ExportPage";
 
-export default async function ExportPage() {
-  const { user, profile } = await getCurrentUserOrRedirect();
+export default async function Export() {
+  const { supabase, user, profile } = await getCurrentUserOrRedirect();
+
+  const { data: vials } = await supabase.from("vials").select("name").eq("user_id", user.id).order("created_at", { ascending: false });
+
+  const uniqueNames = [...new Set((vials ?? []).map((v) => v.name))];
 
   return (
-    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
-      <AppHeader email={user.email || ""} isAdmin={!!profile?.is_admin} />
-      <ComingSoon
-        title="Export is coming soon"
-        body="CSV and PDF export of your dose history land in a later phase."
-      />
-    </div>
+    <ExportPage
+      email={user.email || ""}
+      isAdmin={!!profile?.is_admin}
+      vialNames={uniqueNames}
+    />
   );
 }
