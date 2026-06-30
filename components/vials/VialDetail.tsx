@@ -312,6 +312,38 @@ export function VialDetail({
                       &ldquo;{dose.notes}&rdquo;
                     </div>
                   ) : null}
+                  {dose.effect ? (
+                    <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 6, marginTop: 7 }}>
+                      {Object.entries(dose.effect.tags as Record<string, boolean>)
+                        .filter(([, v]) => v)
+                        .map(([k]) => (
+                          <span
+                            key={k}
+                            style={{
+                              fontSize: 11,
+                              fontWeight: 700,
+                              background: "var(--pt-info-bg)",
+                              color: "var(--pt-info-fg)",
+                              border: "1px solid var(--pt-info-border)",
+                              borderRadius: 99,
+                              padding: "2px 8px",
+                              textTransform: "capitalize",
+                            }}
+                          >
+                            {k === "isr" ? "ISR" : k.charAt(0).toUpperCase() + k.slice(1)}
+                          </span>
+                        ))}
+                      {dose.effect.rating ? (
+                        <span style={{ fontSize: 12, letterSpacing: 1 }}>
+                          {Array.from({ length: 5 }, (_, i) => (
+                            <span key={i} style={{ color: i < (dose.effect?.rating ?? 0) ? "var(--pt-accent)" : "var(--pt-neutral-bar)" }}>
+                              ★
+                            </span>
+                          ))}
+                        </span>
+                      ) : null}
+                    </div>
+                  ) : null}
                 </div>
                 <button
                   type="button"

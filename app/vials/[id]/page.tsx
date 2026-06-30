@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { getCurrentUserOrRedirect } from "@/lib/get-current-user";
 import { VialDetail } from "@/components/vials/VialDetail";
-import type { VialWithDoses } from "@/components/vials/types";
+import type { DoseWithEffects, VialWithDoses } from "@/components/vials/types";
 
 export default async function VialDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -16,9 +16,22 @@ export default async function VialDetailPage({ params }: { params: Promise<{ id:
     .eq("vial_id", id)
     .order("logged_at", { ascending: true });
 
+  const doseIds = (doses ?? []).map((d) => d.id);
+
+  const { data: effects } = doseIds.length > 0
+    ? await supabase.from("dose_effects").select("*").in("dose_log_id", doseIds)
+    : { data: [] };
+
+  const effectByDoseId = new Map((effects ?? []).map((e) => [e.dose_log_id, e]));
+
   const { data: customDevices } = await supabase.from("devices").select("*").eq("user_id", user.id);
 
-  const vialWithDoses: VialWithDoses = { ...vial, doses: doses ?? [] };
+  const dosesWithEffects: DoseWithEffects[] = (doses ?? []).map((d) => ({
+    ...d,
+    effect: effectByDoseId.get(d.id) ?? null,
+  }));
+
+  const vialWithDoses: VialWithDoses = { ...vial, doses: dosesWithEffects };
 
   return (
     <VialDetail

@@ -137,6 +137,8 @@ export async function logDose(
 
   const vialId = str(formData, "vialId");
   const site = str(formData, "site") || "Abdomen";
+  const tagsRaw = str(formData, "tags");
+  const ratingInput = num(formData, "rating");
   const notes = str(formData, "notes") || null;
   const unit = str(formData, "unit") || "mcg"; // 'mcg' | 'mg'
   const confirmed = formData.get("confirmed") === "true";
@@ -222,17 +224,36 @@ export async function logDose(
   }
   // --- End safety checks ---
 
-  const { error: insertError } = await supabase.from("dose_logs").insert({
-    vial_id: vialId,
-    user_id: user.id,
-    mcg_dose: mcgDose,
-    ml_used: mlUsed,
-    units_used: mlUsed * (c.device.unitsPerMl || 0),
-    site,
-    notes,
-    unit_convention: unit,
-  });
+  const { data: newDose, error: insertError } = await supabase
+    .from("dose_logs")
+    .insert({
+      vial_id: vialId,
+      user_id: user.id,
+      mcg_dose: mcgDose,
+      ml_used: mlUsed,
+      units_used: mlUsed * (c.device.unitsPerMl || 0),
+      site,
+      notes,
+      unit_convention: unit,
+    })
+    .select("id")
+    .single();
   if (insertError) return { error: insertError.message };
+
+  // Persist effect tags + rating if the user filled any in.
+  if (newDose?.id) {
+    let tags: Record<string, boolean> = {};
+    try { tags = tagsRaw ? (JSON.parse(tagsRaw) as Record<string, boolean>) : {}; } catch { /* ignore malformed JSON */ }
+    const hasEffects = Object.values(tags).some(Boolean) || (ratingInput != null && ratingInput > 0);
+    if (hasEffects) {
+      await supabase.from("dose_effects").insert({
+        dose_log_id: newDose.id,
+        user_id: user.id,
+        tags,
+        rating: ratingInput && ratingInput > 0 ? ratingInput : null,
+      });
+    }
+  }
 
   const remainingAfter = c.remainingMl - mlUsed;
   const depleted = remainingAfter <= 0.0001 && vial.effectiveness == null;

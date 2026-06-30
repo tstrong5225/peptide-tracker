@@ -1,6 +1,6 @@
 import { getCurrentUserOrRedirect } from "@/lib/get-current-user";
 import { VialsDashboard } from "@/components/vials/VialsDashboard";
-import type { VialWithDoses } from "@/components/vials/types";
+import type { DoseWithEffects, VialWithDoses } from "@/components/vials/types";
 import type { DoseLogRow } from "@/lib/vial-math";
 
 export default async function HomePage() {
@@ -21,10 +21,10 @@ export default async function HomePage() {
 
   const { data: customDevices } = await supabase.from("devices").select("*").eq("user_id", user.id);
 
-  const dosesByVial = new Map<string, DoseLogRow[]>();
+  const dosesByVial = new Map<string, DoseWithEffects[]>();
   for (const d of doses ?? []) {
     const arr = dosesByVial.get(d.vial_id) ?? [];
-    arr.push(d);
+    arr.push({ ...(d as DoseLogRow), effect: null }); // effects not needed on dashboard cards
     dosesByVial.set(d.vial_id, arr);
   }
 
