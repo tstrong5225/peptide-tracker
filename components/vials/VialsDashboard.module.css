@@ -1,0 +1,176 @@
+.main {
+  flex: 1;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 28px 24px;
+  width: 100%;
+}
+
+.reorderAlert {
+  background: oklch(0.95 0.06 25);
+  border: 1.5px solid oklch(0.87 0.12 25);
+  border-radius: 14px;
+  padding: 13px 18px;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.reorderText {
+  flex: 1;
+  font-size: 13px;
+  font-weight: 700;
+  color: oklch(0.4 0.18 25);
+}
+
+.reorderLink {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--pt-accent);
+  white-space: nowrap;
+  text-decoration: underline;
+}
+
+.filterBar {
+  background: white;
+  border-radius: 16px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: flex-end;
+}
+
+.filterLabel {
+  font-size: 12px;
+  font-weight: 700;
+  color: oklch(0.52 0.02 225);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  width: 100%;
+  margin-bottom: 2px;
+}
+
+.filterInputs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  flex: 1;
+}
+
+.filterInput {
+  padding: 8px 12px;
+  border: 1.5px solid var(--pt-border-soft);
+  border-radius: 9px;
+  font-size: 13px;
+  color: var(--pt-ink);
+  background: white;
+  min-width: 140px;
+  flex: 1;
+}
+
+.clearFilter {
+  background: oklch(0.93 0.06 25);
+  color: oklch(0.44 0.18 25);
+  border: none;
+  border-radius: 9px;
+  padding: 8px 14px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 80px 24px;
+  animation: fadeUp 0.4s ease;
+}
+
+.emptyIcon {
+  width: 72px;
+  height: 72px;
+  background: var(--pt-accent-soft-bg);
+  border-radius: 22px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.emptyHeading {
+  font-size: 21px;
+  font-weight: 800;
+  margin-bottom: 9px;
+  letter-spacing: -0.02em;
+}
+
+.emptyBody {
+  font-size: 14px;
+  color: var(--pt-muted);
+  margin-bottom: 28px;
+  text-align: center;
+  max-width: 320px;
+  line-height: 1.7;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 18px;
+  animation: fadeUp 0.3s ease;
+}
+
+/* Header context actions */
+.tabGroup {
+  display: flex;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  padding: 3px;
+  gap: 2px;
+}
+
+.tabBtn {
+  border: none;
+  border-radius: 8px;
+  padding: 6px 13px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.tabBtnActive {
+  background: rgba(255, 255, 255, 0.12);
+  color: white;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+}
+
+.contextActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.addBtn {
+  background: var(--pt-accent);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 9px 16px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}

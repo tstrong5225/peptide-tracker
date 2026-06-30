@@ -1,50 +1,45 @@
-import { redirect } from "next/navigation";
-import { AppHeader } from "@/components/AppHeader";
-import { createClient } from "@/lib/supabase/server";
+import { getCurrentUserOrRedirect } from "@/lib/get-current-user";
+import { VialsDashboard } from "@/components/vials/VialsDashboard";
+import type { VialWithDoses } from "@/components/vials/types";
+import type { DoseLogRow } from "@/lib/vial-math";
 
 export default async function HomePage() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  const { supabase, user, profile } = await getCurrentUserOrRedirect();
 
-  if (!user) redirect("/login");
+  const { data: vials } = await supabase
+    .from("vials")
+    .select("*")
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: false });
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("is_admin")
-    .eq("id", user.id)
-    .single();
+  const vialIds = (vials ?? []).map((v) => v.id);
+
+  const { data: doses } =
+    vialIds.length > 0
+      ? await supabase.from("dose_logs").select("*").in("vial_id", vialIds).order("logged_at", { ascending: true })
+      : { data: [] as DoseLogRow[] };
+
+  const { data: customDevices } = await supabase.from("devices").select("*").eq("user_id", user.id);
+
+  const dosesByVial = new Map<string, DoseLogRow[]>();
+  for (const d of doses ?? []) {
+    const arr = dosesByVial.get(d.vial_id) ?? [];
+    arr.push(d);
+    dosesByVial.set(d.vial_id, arr);
+  }
+
+  const vialsWithDoses: VialWithDoses[] = (vials ?? []).map((v) => ({
+    ...v,
+    doses: dosesByVial.get(v.id) ?? [],
+  }));
 
   return (
-    <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
-      <AppHeader email={user.email || ""} isAdmin={!!profile?.is_admin} />
-      <main
-        style={{
-          flex: 1,
-          maxWidth: 1200,
-          margin: "0 auto",
-          padding: "28px 24px",
-          width: "100%",
-        }}
-      >
-        <div
-          style={{
-            background: "white",
-            borderRadius: 20,
-            boxShadow: "var(--pt-card-shadow)",
-            padding: "32px 28px",
-          }}
-        >
-          <div style={{ fontSize: 20, fontWeight: 800, marginBottom: 8 }}>
-            You&apos;re signed in.
-          </div>
-          <p style={{ fontSize: 14, color: "var(--pt-muted)", lineHeight: 1.6 }}>
-            The Vials dashboard is built in the next phase. For now this confirms
-            auth, session isolation, and routing are working end to end.
-          </p>
-        </div>
-      </main>
-    </div>
+    <VialsDashboard
+      email={user.email || ""}
+      isAdmin={!!profile?.is_admin}
+      vials={vialsWithDoses}
+      customDevices={customDevices ?? []}
+      lowVialThresholdPct={profile?.low_vial_threshold_pct ?? 20}
+    />
   );
 }

@@ -1,0 +1,231 @@
+.card {
+  background: white;
+  border-radius: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 18px rgba(0, 0, 0, 0.05);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.topRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.name {
+  font-size: 17px;
+  font-weight: 800;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  letter-spacing: -0.01em;
+}
+
+.deviceLine {
+  font-size: 12px;
+  color: oklch(0.55 0.02 225);
+  margin-top: 2px;
+  font-weight: 500;
+}
+
+.vendorLine {
+  font-size: 11px;
+  color: var(--pt-accent-soft-fg);
+  margin-top: 3px;
+  font-weight: 600;
+}
+
+.batchLine {
+  font-size: 11px;
+  color: oklch(0.6 0.02 225);
+  margin-top: 1px;
+  font-weight: 500;
+}
+
+.badges {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+  flex-shrink: 0;
+}
+
+.statusBadge {
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 99px;
+  letter-spacing: 0.02em;
+}
+
+.expiryBadge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 99px;
+  white-space: nowrap;
+}
+
+.barRow {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.barLabel {
+  font-size: 11px;
+  font-weight: 700;
+  color: oklch(0.55 0.02 225);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.barPct {
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.barTrack {
+  height: 8px;
+  background: oklch(0.93 0.01 38);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.barFill {
+  height: 100%;
+  border-radius: 99px;
+  transition: width 0.5s ease;
+}
+
+.statGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+}
+
+.statBox {
+  background: var(--pt-page-bg);
+  border-radius: 11px;
+  padding: 10px 12px;
+}
+
+.statLabel {
+  font-size: 10px;
+  font-weight: 700;
+  color: oklch(0.55 0.02 225);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 3px;
+}
+
+.statValue {
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.statUnit {
+  font-size: 11px;
+  font-weight: 500;
+  color: oklch(0.55 0.02 225);
+}
+
+.costBox {
+  background: var(--pt-accent-soft-bg);
+  border-radius: 10px;
+  padding: 9px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.costLabel {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--pt-accent-soft-fg);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.costValue {
+  font-size: 17px;
+  font-weight: 800;
+  color: oklch(0.4 0.19 38);
+  letter-spacing: -0.02em;
+}
+
+.effectBox {
+  background: var(--pt-page-bg);
+  border-radius: 10px;
+  padding: 9px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.effectLabel {
+  font-size: 11px;
+  font-weight: 700;
+  color: oklch(0.55 0.02 225);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.effectValue {
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.lastDose {
+  font-size: 12px;
+  color: oklch(0.58 0.02 225);
+}
+
+.actionsRow {
+  display: flex;
+  gap: 7px;
+}
+
+.btnPrimary {
+  flex: 1;
+  background: var(--pt-accent);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 9px 6px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btnSoft {
+  flex: 1;
+  background: var(--pt-accent-soft-bg);
+  color: var(--pt-accent-soft-fg);
+  border: none;
+  border-radius: 10px;
+  padding: 9px 6px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btnIcon {
+  background: white;
+  color: oklch(0.52 0.02 225);
+  border: 1.5px solid var(--pt-border);
+  border-radius: 10px;
+  padding: 9px 11px;
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+}
+
+.btnIconDanger {
+  color: oklch(0.52 0.18 22);
+}

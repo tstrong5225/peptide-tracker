@@ -1,22 +1,11 @@
 import { redirect } from "next/navigation";
 import { AppHeader } from "@/components/AppHeader";
-import { createClient } from "@/lib/supabase/server";
+import { getCurrentUserOrRedirect } from "@/lib/get-current-user";
 import { InviteForm } from "./InviteForm";
 import styles from "./page.module.css";
 
 export default async function AdminInvitesPage() {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) redirect("/login");
-
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("is_admin")
-    .eq("id", user.id)
-    .single();
+  const { supabase, user, profile } = await getCurrentUserOrRedirect();
 
   if (!profile?.is_admin) redirect("/");
 

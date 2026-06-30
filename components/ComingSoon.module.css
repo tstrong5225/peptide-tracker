@@ -1,0 +1,29 @@
+.main {
+  flex: 1;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 28px 24px;
+  width: 100%;
+}
+
+.card {
+  background: white;
+  border-radius: 20px;
+  box-shadow: var(--pt-card-shadow);
+  padding: 52px 24px;
+  text-align: center;
+}
+
+.title {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.body {
+  font-size: 14px;
+  color: var(--pt-muted);
+  max-width: 360px;
+  margin: 0 auto;
+  line-height: 1.7;
+}

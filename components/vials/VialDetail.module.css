@@ -1,0 +1,201 @@
+.main {
+  flex: 1;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 28px 24px;
+  width: 100%;
+}
+
+.backBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--pt-accent);
+  font-size: 14px;
+  font-weight: 700;
+  padding: 0;
+  margin-bottom: 22px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.card {
+  background: white;
+  border-radius: 22px;
+  box-shadow: var(--pt-card-shadow);
+  padding: 26px;
+  margin-bottom: 16px;
+  animation: fadeUp 0.3s ease;
+}
+
+.headerTop {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.vialName {
+  font-size: 26px;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+.vialSub {
+  font-size: 13px;
+  color: var(--pt-muted);
+  margin-top: 4px;
+}
+
+.vendorLine {
+  font-size: 13px;
+  color: var(--pt-accent-soft-fg);
+  margin-top: 3px;
+  font-weight: 600;
+}
+
+.batchLine {
+  font-size: 12px;
+  color: var(--pt-muted);
+  margin-top: 2px;
+}
+
+.statusBadge {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 5px 14px;
+  border-radius: 99px;
+}
+
+.barRow {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 7px;
+}
+
+.barLabel {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--pt-muted);
+}
+
+.barPct {
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.barTrack {
+  height: 10px;
+  background: oklch(0.93 0.01 38);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.barFill {
+  height: 100%;
+  border-radius: 99px;
+  transition: width 0.5s ease;
+}
+
+.statGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 10px;
+}
+
+.statBox {
+  background: var(--pt-page-bg);
+  border-radius: 12px;
+  padding: 13px 14px;
+}
+
+.statBoxHighlight {
+  background: var(--pt-accent-soft-bg);
+  border-radius: 12px;
+  padding: 13px 14px;
+  border: 2px solid oklch(0.86 0.08 222);
+}
+
+.statLabel {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--pt-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 3px;
+}
+
+.statValue {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.costNote {
+  margin-top: 9px;
+  font-size: 12px;
+  color: oklch(0.6 0.02 225);
+}
+
+.cardTitle {
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+  margin-bottom: 14px;
+}
+
+.cardTitleRow {
+  padding: 17px 22px;
+  border-bottom: 1.5px solid var(--pt-border);
+}
+
+.cardTitleRowText {
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.stabilityGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.fridgeNote {
+  border-radius: 12px;
+  padding: 11px 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.doseRow {
+  padding: 15px 22px;
+  border-bottom: 1px solid oklch(0.96 0.005 222);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.doseSiteBadge {
+  background: var(--pt-accent-soft-bg);
+  color: var(--pt-accent-soft-fg);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 99px;
+}
+
+.emptyHistory {
+  padding: 52px 22px;
+  text-align: center;
+  color: var(--pt-muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
