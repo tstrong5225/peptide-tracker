@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
+import { ReminderBanner, type DueReminder } from "@/components/ReminderBanner";
 import { compute, getExpiry, getCostPerDose, badge, barColor } from "@/lib/vial-math";
 import type { DeviceRow } from "@/lib/vial-math";
 import type { VialWithDoses } from "./types";
@@ -20,12 +21,14 @@ export function VialsDashboard({
   vials,
   customDevices,
   lowVialThresholdPct,
+  dueReminders = [],
 }: {
   email: string;
   isAdmin: boolean;
   vials: VialWithDoses[];
   customDevices: DeviceRow[];
   lowVialThresholdPct: number;
+  dueReminders?: DueReminder[];
 }) {
   const [dashTab, setDashTab] = useState<"active" | "archive">("active");
   const [archiveFilter, setArchiveFilter] = useState({
@@ -185,6 +188,7 @@ export function VialsDashboard({
       />
 
       <main className={styles.main}>
+        {dueReminders.length > 0 ? <ReminderBanner reminders={dueReminders} /> : null}
         {reorderItems.length > 0 ? (
           <div className={styles.reorderAlert} onClick={() => setShowReorderModal(true)}>
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none">

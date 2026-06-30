@@ -1,0 +1,115 @@
+.main {
+  flex: 1;
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 28px 24px;
+  width: 100%;
+}
+
+.backBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--pt-accent);
+  font-size: 14px;
+  font-weight: 700;
+  padding: 0;
+  margin-bottom: 22px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.card {
+  background: var(--pt-surface);
+  border-radius: 22px;
+  box-shadow: var(--pt-card-shadow);
+  padding: 22px 24px;
+  animation: fadeUp 0.3s ease;
+}
+
+.statGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.statBox {
+  background: var(--pt-surface-soft);
+  border-radius: 12px;
+  padding: 12px 14px;
+  text-align: center;
+}
+
+.statLabel {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--pt-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 3px;
+}
+
+.statValue {
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.legend {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.legendSwatch {
+  width: 11px;
+  height: 11px;
+  border-radius: 3px;
+}
+
+.legendLabel {
+  font-size: 11px;
+  color: var(--pt-muted);
+  font-weight: 600;
+}
+
+.weekHeader {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+.weekHeaderCell {
+  text-align: center;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--pt-muted-2);
+}
+
+.calGrid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+
+.calCell {
+  aspect-ratio: 1;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.calCellNum {
+  font-size: 12px;
+  font-weight: 700;
+}
