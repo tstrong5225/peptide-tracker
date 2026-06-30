@@ -12,6 +12,7 @@ import { ReconCalcModal } from "./ReconCalcModal";
 import { RateVialModal } from "./RateVialModal";
 import { ConfirmDeleteModal } from "./ConfirmDeleteModal";
 import { deleteVial, deleteDose } from "@/app/vials/actions";
+import { ResearchPanel } from "./ResearchPanel";
 import styles from "./VialDetail.module.css";
 import dashboardStyles from "./VialsDashboard.module.css";
 
@@ -378,6 +379,8 @@ export function VialDetail({
             ))
           )}
         </div>
+
+        <ResearchPanel vialName={vial.name} />
       </main>
 
       {showAddModal ? (
