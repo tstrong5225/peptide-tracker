@@ -1,0 +1,81 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+
+.label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--pt-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.input {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1.5px solid var(--pt-border-soft);
+  border-radius: 11px;
+  font-size: 14px;
+  color: var(--pt-ink);
+  background: white;
+}
+
+.error {
+  background: var(--pt-danger-bg);
+  border: 1.5px solid var(--pt-danger-border);
+  color: var(--pt-danger-fg);
+  border-radius: 11px;
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.success {
+  background: var(--pt-success-bg);
+  border: 1.5px solid oklch(0.82 0.09 155);
+  color: var(--pt-success-fg);
+  border-radius: 11px;
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.buttonPrimary {
+  background: var(--pt-accent);
+  color: white;
+  border: none;
+  border-radius: 13px;
+  padding: 13px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.buttonPrimary:disabled {
+  background: oklch(0.76 0.06 222);
+  cursor: not-allowed;
+}
+
+.buttonSecondary {
+  background: oklch(0.95 0.007 222);
+  color: oklch(0.40 0.02 225);
+  border: none;
+  border-radius: 13px;
+  padding: 13px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.linkRow {
+  font-size: 13px;
+  color: var(--pt-muted);
+  text-align: center;
+}
+
+.linkRow a {
+  color: var(--pt-accent);
+  font-weight: 700;
+}
