@@ -1,0 +1,71 @@
+.main {
+  flex: 1;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 28px 24px;
+  width: 100%;
+}
+
+.headerRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 22px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.heading {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.tabGroup {
+  display: flex;
+  background: var(--pt-surface-soft);
+  border-radius: 10px;
+  padding: 3px;
+  gap: 2px;
+}
+
+.tabBtn {
+  border: none;
+  border-radius: 8px;
+  padding: 7px 15px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  background: transparent;
+  color: var(--pt-muted);
+}
+
+.tabBtnActive {
+  background: var(--pt-surface);
+  color: var(--pt-ink);
+  box-shadow: var(--pt-card-shadow);
+}
+
+.empty {
+  background: var(--pt-surface);
+  border-radius: 20px;
+  box-shadow: var(--pt-card-shadow);
+  padding: 52px 24px;
+  text-align: center;
+  animation: fadeUp 0.3s ease;
+}
+
+.emptyTitle {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  letter-spacing: -0.01em;
+}
+
+.emptyBody {
+  font-size: 14px;
+  color: var(--pt-muted);
+  max-width: 340px;
+  margin: 0 auto;
+  line-height: 1.7;
+}

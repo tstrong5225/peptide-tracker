@@ -50,6 +50,11 @@
   --pt-neutral-bar: oklch(0.78 0.02 222);
   --pt-disabled-bg: oklch(0.76 0.06 222);
 
+  --pt-chart-purple: oklch(0.5 0.16 280);
+  --pt-chart-purple-soft: oklch(0.93 0.05 280);
+  --pt-chart-amber: oklch(0.58 0.15 55);
+  --pt-chart-amber-soft: oklch(0.95 0.06 55);
+
   --pt-card-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 4px 18px rgba(0, 0, 0, 0.05);
   --pt-modal-shadow: 0 28px 70px rgba(0, 0, 0, 0.22);
   --pt-overlay: rgba(10, 20, 45, 0.5);
@@ -104,6 +109,11 @@
   --pt-neutral-fg: oklch(0.7 0.01 225);
   --pt-neutral-bar: oklch(0.4 0.01 222);
   --pt-disabled-bg: oklch(0.35 0.03 222);
+
+  --pt-chart-purple: oklch(0.68 0.14 280);
+  --pt-chart-purple-soft: oklch(0.28 0.06 280);
+  --pt-chart-amber: oklch(0.72 0.14 55);
+  --pt-chart-amber-soft: oklch(0.28 0.06 55);
 
   --pt-card-shadow: 0 1px 3px rgba(0, 0, 0, 0.3), 0 4px 18px rgba(0, 0, 0, 0.35);
   --pt-modal-shadow: 0 28px 70px rgba(0, 0, 0, 0.55);
