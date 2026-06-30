@@ -17,6 +17,31 @@
   gap: 18px;
 }
 
+.brandLink {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.logoBox {
+  background: white;
+  border-radius: 8px;
+  padding: 4px 10px;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.divider {
+  width: 1.5px;
+  height: 28px;
+  background: var(--pt-header-divider);
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
 .brand {
   display: flex;
   flex-direction: column;
@@ -31,14 +56,16 @@
   text-transform: uppercase;
   color: white;
   line-height: 1;
+  white-space: nowrap;
 }
 
 .brandSubtitle {
   font-size: 10px;
   font-weight: 500;
   letter-spacing: 0.06em;
-  color: oklch(0.65 0.12 38);
+  color: var(--pt-header-subtitle);
   line-height: 1;
+  white-space: nowrap;
 }
 
 .nav {

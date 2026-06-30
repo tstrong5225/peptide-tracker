@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "@/app/actions";
@@ -27,10 +28,23 @@ export function AppHeader({
   return (
     <header className={styles.header}>
       <div className={styles.bar}>
-        <div className={styles.brand}>
-          <div className={styles.brandTitle}>Peptide Tracker</div>
-          <div className={styles.brandSubtitle}>Vial Dosage Manager</div>
-        </div>
+        <Link href="/" className={styles.brandLink}>
+          <div className={styles.logoBox}>
+            <Image
+              src="/cinder-labs-logo.png"
+              alt="Cinder Labs"
+              height={30}
+              width={88}
+              style={{ height: 30, width: "auto", display: "block" }}
+              priority
+            />
+          </div>
+          <div className={styles.divider} />
+          <div className={styles.brand}>
+            <div className={styles.brandTitle}>Peptide Tracker</div>
+            <div className={styles.brandSubtitle}>Vial Dosage Manager</div>
+          </div>
+        </Link>
         <nav className={styles.nav}>
           {NAV.map((item) => (
             <Link
