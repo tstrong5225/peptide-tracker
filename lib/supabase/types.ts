@@ -82,10 +82,21 @@ type Protocol = {
   peptide: string;
   pattern: string;
   selected_days: number[];
+  cycle_on: number | null;
+  cycle_off: number | null;
   start_date: string;
   duration: number;
   notes: string | null;
   reminder_time: string | null;
+  created_at: string;
+};
+
+type PushSubscriptionRow = {
+  id: string;
+  user_id: string;
+  endpoint: string;
+  p256dh: string;
+  auth: string;
   created_at: string;
 };
 
@@ -129,6 +140,7 @@ export type Database = {
       >;
       dose_effects: TableDef<DoseEffect, "dose_log_id" | "user_id">;
       protocols: TableDef<Protocol, "user_id" | "name" | "peptide" | "pattern" | "start_date">;
+      push_subscriptions: TableDef<PushSubscriptionRow, "user_id" | "endpoint" | "p256dh" | "auth">;
       body_metrics: TableDef<BodyMetric, "user_id">;
       reference_links: TableDef<ReferenceLink, "peptide" | "title" | "url">;
     };

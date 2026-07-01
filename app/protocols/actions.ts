@@ -26,6 +26,7 @@ export async function saveProtocol(
   } = await supabase.auth.getUser();
   if (!user) return { error: "Not signed in." };
 
+  const id = str(formData, "id") || null;
   const name = str(formData, "name");
   const peptide = str(formData, "peptide");
   const pattern = str(formData, "pattern") || "daily";
@@ -34,6 +35,8 @@ export async function saveProtocol(
   const notes = str(formData, "notes") || null;
   const reminderTime = str(formData, "reminderTime") || null;
   const selectedDaysRaw = str(formData, "selectedDays");
+  const cycleOn = num(formData, "cycleOn");
+  const cycleOff = num(formData, "cycleOff");
 
   if (!name || !peptide || !startDate) {
     return { error: "Protocol name, peptide, and start date are required." };
@@ -46,16 +49,59 @@ export async function saveProtocol(
     selectedDays = [];
   }
 
-  const { error } = await supabase.from("protocols").insert({
+  const payload = {
     user_id: user.id,
     name,
     peptide,
     pattern,
     selected_days: selectedDays,
+    cycle_on: pattern === "xony" ? (cycleOn ?? 5) : null,
+    cycle_off: pattern === "xony" ? (cycleOff ?? 2) : null,
     start_date: startDate,
     duration,
     notes,
     reminder_time: reminderTime,
+  };
+
+  const { error } = id
+    ? await supabase.from("protocols").update(payload).eq("id", id).eq("user_id", user.id)
+    : await supabase.from("protocols").insert(payload);
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/protocols");
+  return { success: true };
+}
+
+export async function cloneProtocol(id: string): Promise<ActionState> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Not signed in." };
+
+  const { data: source, error: fetchErr } = await supabase
+    .from("protocols")
+    .select("*")
+    .eq("id", id)
+    .eq("user_id", user.id)
+    .single();
+
+  if (fetchErr || !source) return { error: "Protocol not found." };
+
+  const today = new Date().toISOString().slice(0, 10);
+  const { error } = await supabase.from("protocols").insert({
+    user_id: user.id,
+    name: `${source.name} (copy)`,
+    peptide: source.peptide,
+    pattern: source.pattern,
+    selected_days: source.selected_days,
+    cycle_on: source.cycle_on,
+    cycle_off: source.cycle_off,
+    start_date: today,
+    duration: source.duration,
+    notes: source.notes,
+    reminder_time: source.reminder_time,
   });
 
   if (error) return { error: error.message };

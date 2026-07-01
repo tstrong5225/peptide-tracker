@@ -3,16 +3,31 @@
 import { useActionState, useState } from "react";
 import { Modal, ModalHeader, ModalBody } from "@/components/ui/Modal";
 import formStyles from "@/components/ui/Form.module.css";
-import { PROTOCOL_PATTERNS, WEEKDAYS } from "@/lib/protocol-logic";
+import { PROTOCOL_PATTERNS, WEEKDAYS, type ProtocolRow } from "@/lib/protocol-logic";
 import { saveProtocol, type ActionState } from "@/app/protocols/actions";
 
 export function CreateProtocolModal({
   onClose,
   onSaved,
+  initialData,
 }: {
   onClose: () => void;
   onSaved: () => void;
+  initialData?: ProtocolRow;
 }) {
+  const isClone = !!initialData;
+  const today = new Date().toISOString().slice(0, 10);
+
+  // Pre-compute defaults outside JSX to avoid TypeScript control-flow narrowing issues
+  const src = initialData ?? null;
+  const defaultName = src ? `${src.name} (copy)` : "";
+  const defaultPeptide = src?.peptide ?? "";
+  const defaultStartDate = isClone ? today : (src?.start_date ?? "");
+  const defaultDuration = src?.duration ?? 28;
+  const defaultReminderTime = src?.reminder_time ?? "";
+  const defaultNotes = src?.notes ?? "";
+  const defaultSubtitle = src ? `Copying "${src.name}" — starts today` : undefined;
+
   const [state, formAction, isPending] = useActionState<ActionState, FormData>(
     async (prevState, formData) => {
       const result = await saveProtocol(prevState, formData);
@@ -22,8 +37,12 @@ export function CreateProtocolModal({
     {},
   );
 
-  const [pattern, setPattern] = useState<string>("daily");
-  const [selectedDays, setSelectedDays] = useState<number[]>([]);
+  const [pattern, setPattern] = useState<string>(initialData?.pattern ?? "daily");
+  const [selectedDays, setSelectedDays] = useState<number[]>(
+    (initialData?.selected_days as number[]) ?? [],
+  );
+  const [cycleOn, setCycleOn] = useState<string>(String(initialData?.cycle_on ?? 5));
+  const [cycleOff, setCycleOff] = useState<string>(String(initialData?.cycle_off ?? 2));
 
   function toggleDay(day: number) {
     setSelectedDays((prev) => (prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day].sort()));
@@ -36,9 +55,13 @@ export function CreateProtocolModal({
   return (
     <Modal onClose={onClose} maxWidth={560}>
       <form action={formAction}>
+        {/* Hidden: pass ID only when editing (not cloning) */}
         <input type="hidden" name="pattern" value={pattern} />
         <input type="hidden" name="selectedDays" value={JSON.stringify(selectedDays)} />
-        <ModalHeader title="New Protocol" />
+        <ModalHeader
+          title={isClone ? "Clone Protocol" : "New Protocol"}
+          subtitle={defaultSubtitle}
+        />
         <ModalBody>
           {state.error ? <div className={formStyles.error}>{state.error}</div> : null}
 
@@ -48,6 +71,7 @@ export function CreateProtocolModal({
               name="name"
               type="text"
               placeholder="e.g. BPC-157 Healing Protocol"
+              defaultValue={defaultName}
               required
               className={formStyles.input}
             />
@@ -55,7 +79,14 @@ export function CreateProtocolModal({
 
           <div className={formStyles.field}>
             <label className={formStyles.label}>Associated Peptide</label>
-            <input name="peptide" type="text" placeholder="e.g. BPC-157" required className={formStyles.input} />
+            <input
+              name="peptide"
+              type="text"
+              placeholder="e.g. BPC-157"
+              defaultValue={defaultPeptide}
+              required
+              className={formStyles.input}
+            />
           </div>
 
           <div>
@@ -93,6 +124,56 @@ export function CreateProtocolModal({
             </div>
           </div>
 
+          {/* Cycle fields — shown for xony */}
+          {pattern === "xony" ? (
+            <div>
+              <label className={formStyles.label} style={{ display: "block", marginBottom: 8 }}>
+                Cycle Length
+              </label>
+              <div style={{ display: "grid", gridTemplateColumns: "var(--grid-2col)", gap: 13 }}>
+                <div className={formStyles.field}>
+                  <label className={formStyles.label}>Days on</label>
+                  <input
+                    name="cycleOn"
+                    type="number"
+                    min={1}
+                    max={60}
+                    value={cycleOn}
+                    onChange={(e) => setCycleOn(e.target.value)}
+                    className={formStyles.input}
+                  />
+                </div>
+                <div className={formStyles.field}>
+                  <label className={formStyles.label}>Days off</label>
+                  <input
+                    name="cycleOff"
+                    type="number"
+                    min={1}
+                    max={60}
+                    value={cycleOff}
+                    onChange={(e) => setCycleOff(e.target.value)}
+                    className={formStyles.input}
+                  />
+                </div>
+              </div>
+              <div
+                style={{
+                  fontSize: 12,
+                  color: "var(--pt-accent-soft-fg)",
+                  fontWeight: 600,
+                  marginTop: 6,
+                  padding: "8px 12px",
+                  background: "var(--pt-accent-soft-bg)",
+                  borderRadius: 9,
+                }}
+              >
+                {cycleOn} day{Number(cycleOn) !== 1 ? "s" : ""} on,{" "}
+                {cycleOff} day{Number(cycleOff) !== 1 ? "s" : ""} off — repeating cycle
+              </div>
+            </div>
+          ) : null}
+
+          {/* Weekly day picker */}
           {pattern === "weekly" ? (
             <div>
               <label className={formStyles.label} style={{ display: "block", marginBottom: 8 }}>
@@ -141,7 +222,13 @@ export function CreateProtocolModal({
           <div style={{ display: "grid", gridTemplateColumns: "var(--grid-2col)", gap: 13 }}>
             <div className={formStyles.field}>
               <label className={formStyles.label}>Start Date</label>
-              <input name="startDate" type="date" required className={formStyles.input} />
+              <input
+                name="startDate"
+                type="date"
+                required
+                defaultValue={defaultStartDate}
+                className={formStyles.input}
+              />
             </div>
             <div className={formStyles.field}>
               <label className={formStyles.label}>Duration (days)</label>
@@ -151,7 +238,7 @@ export function CreateProtocolModal({
                 placeholder="e.g. 21"
                 min={1}
                 step="1"
-                defaultValue={28}
+                defaultValue={defaultDuration}
                 className={formStyles.input}
               />
             </div>
@@ -159,7 +246,15 @@ export function CreateProtocolModal({
 
           <div className={formStyles.field}>
             <label className={formStyles.label}>Reminder Time (optional)</label>
-            <input name="reminderTime" type="time" className={formStyles.input} />
+            <input
+              name="reminderTime"
+              type="time"
+              defaultValue={defaultReminderTime}
+              className={formStyles.input}
+            />
+            <div style={{ fontSize: 11, color: "var(--pt-muted-2)", marginTop: 5 }}>
+              Time is in UTC. Push notifications fire at this hour daily on dose days.
+            </div>
           </div>
 
           <div className={formStyles.field}>
@@ -168,6 +263,7 @@ export function CreateProtocolModal({
               name="notes"
               rows={3}
               placeholder="e.g. Based on Gwyer et al., 2019"
+              defaultValue={defaultNotes}
               style={{
                 width: "100%",
                 padding: "11px 14px",
@@ -187,7 +283,7 @@ export function CreateProtocolModal({
               Cancel
             </button>
             <button type="submit" disabled={isPending} className={formStyles.buttonPrimary} style={{ flex: 2 }}>
-              {isPending ? "Saving…" : "Save Protocol"}
+              {isPending ? "Saving…" : isClone ? "Clone Protocol" : "Save Protocol"}
             </button>
           </div>
         </ModalBody>

@@ -1,11 +1,12 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { ConfirmDeleteModal } from "@/components/vials/ConfirmDeleteModal";
-import { PATTERN_LABELS, type Adherence, type ProtocolRow } from "@/lib/protocol-logic";
+import { patternLabel, type Adherence, type ProtocolRow } from "@/lib/protocol-logic";
 import { deleteProtocol } from "@/app/protocols/actions";
+import { NotificationToggle } from "./NotificationToggle";
 import { CreateProtocolModal } from "./CreateProtocolModal";
 import styles from "./ProtocolsPage.module.css";
 
@@ -31,8 +32,12 @@ export function ProtocolsPage({
   cards: ProtocolCardData[];
 }) {
   const router = useRouter();
+  const [isPending, startTransition] = useTransition();
   const [showCreate, setShowCreate] = useState(false);
+  const [cloneFrom, setCloneFrom] = useState<ProtocolRow | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<ProtocolRow | null>(null);
+
+  const hasReminders = cards.some((c) => !!c.protocol.reminder_time);
 
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
@@ -40,31 +45,34 @@ export function ProtocolsPage({
         email={email}
         isAdmin={isAdmin}
         context={
-          <button
-            type="button"
-            onClick={() => setShowCreate(true)}
-            style={{
-              background: "var(--pt-accent)",
-              color: "white",
-              border: "none",
-              borderRadius: 10,
-              padding: "9px 16px",
-              fontSize: 13,
-              fontWeight: 700,
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              gap: 6,
-              whiteSpace: "nowrap",
-              flexShrink: 0,
-            }}
-          >
-            <svg width="12" height="12" viewBox="0 0 13 13" fill="none">
-              <line x1="6.5" y1="1" x2="6.5" y2="12" stroke="white" strokeWidth="2.2" strokeLinecap="round" />
-              <line x1="1" y1="6.5" x2="12" y2="6.5" stroke="white" strokeWidth="2.2" strokeLinecap="round" />
-            </svg>
-            New Protocol
-          </button>
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            {hasReminders ? <NotificationToggle /> : null}
+            <button
+              type="button"
+              onClick={() => setShowCreate(true)}
+              style={{
+                background: "var(--pt-accent)",
+                color: "white",
+                border: "none",
+                borderRadius: 10,
+                padding: "9px 16px",
+                fontSize: 13,
+                fontWeight: 700,
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+                whiteSpace: "nowrap",
+                flexShrink: 0,
+              }}
+            >
+              <svg width="12" height="12" viewBox="0 0 13 13" fill="none">
+                <line x1="6.5" y1="1" x2="6.5" y2="12" stroke="white" strokeWidth="2.2" strokeLinecap="round" />
+                <line x1="1" y1="6.5" x2="12" y2="6.5" stroke="white" strokeWidth="2.2" strokeLinecap="round" />
+              </svg>
+              New Protocol
+            </button>
+          </div>
         }
       />
 
@@ -121,16 +129,35 @@ export function ProtocolsPage({
                     <div>
                       <div className={styles.cardName}>{protocol.name}</div>
                       <div className={styles.cardSub}>
-                        {PATTERN_LABELS[protocol.pattern] || protocol.pattern} · {protocol.peptide} · Started {startStr}
+                        {patternLabel(protocol)} · {protocol.peptide} · Started {startStr}
+                        {protocol.reminder_time ? ` · ⏰ ${protocol.reminder_time.slice(0, 5)} UTC` : ""}
                       </div>
                       {protocol.notes ? <div className={styles.cardSource}>Source: {protocol.notes}</div> : null}
                     </div>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 6, flexShrink: 0 }}>
                       <span className={styles.statusBadge} style={{ background: s.bg, color: s.fg }}>
                         {s.label}
                       </span>
+                      {/* Clone button */}
                       <button
                         type="button"
+                        title="Clone protocol"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setCloneFrom(protocol);
+                        }}
+                        disabled={isPending}
+                        style={{ background: "none", border: "none", cursor: "pointer", color: "var(--pt-muted-2)", padding: 4, display: "flex" }}
+                      >
+                        <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+                          <rect x="5" y="1" width="9" height="11" rx="2" stroke="currentColor" strokeWidth="1.5" />
+                          <rect x="2" y="4" width="9" height="11" rx="2" stroke="currentColor" strokeWidth="1.5" fill="var(--pt-card-bg)" />
+                        </svg>
+                      </button>
+                      {/* Delete button */}
+                      <button
+                        type="button"
+                        title="Delete protocol"
                         onClick={(e) => {
                           e.stopPropagation();
                           setConfirmDelete(protocol);
@@ -169,7 +196,7 @@ export function ProtocolsPage({
                     ) : (
                       <>
                         Adherence: <strong style={{ color: "var(--pt-ink)" }}>{adherence.pct}%</strong> ·{" "}
-                        {adherence.remaining} days remaining
+                        {adherence.remaining} dose day{adherence.remaining === 1 ? "" : "s"} remaining
                       </>
                     )}
                   </div>
@@ -190,6 +217,17 @@ export function ProtocolsPage({
 
       {showCreate ? (
         <CreateProtocolModal onClose={() => setShowCreate(false)} onSaved={() => setShowCreate(false)} />
+      ) : null}
+
+      {cloneFrom ? (
+        <CreateProtocolModal
+          initialData={cloneFrom}
+          onClose={() => setCloneFrom(null)}
+          onSaved={() => {
+            setCloneFrom(null);
+            startTransition(() => { router.refresh(); });
+          }}
+        />
       ) : null}
 
       {confirmDelete ? (
