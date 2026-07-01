@@ -138,7 +138,7 @@ export function CreateProtocolModal({
             </div>
           ) : null}
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 13 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "var(--grid-2col)", gap: 13 }}>
             <div className={formStyles.field}>
               <label className={formStyles.label}>Start Date</label>
               <input name="startDate" type="date" required className={formStyles.input} />

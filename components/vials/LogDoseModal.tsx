@@ -217,7 +217,7 @@ export function LogDoseModal({
                   </span>
                 ) : null}
               </div>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 7, marginBottom: 10 }}>
+              <div style={{ display: "grid", gridTemplateColumns: "var(--grid-4col)", gap: 7, marginBottom: 10 }}>
                 {SITES.map((s) => (
                   <button
                     key={s.key}

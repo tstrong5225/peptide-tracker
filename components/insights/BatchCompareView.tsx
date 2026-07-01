@@ -31,14 +31,17 @@ export function BatchCompareView({ batchGroups }: { batchGroups: BatchGroup[] })
             <div style={{ padding: "17px 22px", borderBottom: "1.5px solid var(--pt-border)" }}>
               <div style={{ fontSize: 16, fontWeight: 800 }}>{grp.name}</div>
             </div>
+            {/* Horizontal scroll wrapper so the 5-column grid doesn't break on mobile */}
+            <div style={{ overflowX: "auto" }}>
             <div
               style={{
                 padding: "13px 22px",
                 background: "var(--pt-surface-soft)",
                 borderBottom: "1px solid var(--pt-border)",
                 display: "grid",
-                gridTemplateColumns: "1.2fr 1.2fr 0.8fr 1fr 1fr",
+                gridTemplateColumns: "minmax(110px,1.2fr) minmax(110px,1.2fr) minmax(70px,0.8fr) minmax(110px,1fr) minmax(80px,1fr)",
                 gap: 10,
+                minWidth: 480,
               }}
             >
               {["Batch", "Manufacturer", "COA", "Avg Effectiveness", "Vials Used"].map((h) => (
@@ -63,9 +66,10 @@ export function BatchCompareView({ batchGroups }: { batchGroups: BatchGroup[] })
                   padding: "12px 22px",
                   borderBottom: "1px solid var(--pt-divider)",
                   display: "grid",
-                  gridTemplateColumns: "1.2fr 1.2fr 0.8fr 1fr 1fr",
+                  gridTemplateColumns: "minmax(110px,1.2fr) minmax(110px,1.2fr) minmax(70px,0.8fr) minmax(110px,1fr) minmax(80px,1fr)",
                   gap: 10,
                   alignItems: "center",
+                  minWidth: 480,
                 }}
               >
                 <div style={{ fontSize: 12, fontWeight: 700, fontFamily: "monospace", color: "var(--pt-ink)" }}>
@@ -93,6 +97,7 @@ export function BatchCompareView({ batchGroups }: { batchGroups: BatchGroup[] })
                 </div>
               </div>
             ))}
+            </div> {/* close overflow-x scroll wrapper */}
           </div>
         ))}
     </div>

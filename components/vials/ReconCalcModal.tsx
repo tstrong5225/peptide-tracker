@@ -37,7 +37,7 @@ export function ReconCalcModal({
         subtitle="Calculate exact draw amount for any dilution or target dose"
       />
       <ModalBody>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 13 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "var(--grid-2col)", gap: 13 }}>
           <div className={formStyles.field}>
             <label className={formStyles.label}>Vial Total (mg)</label>
             <input
@@ -57,7 +57,7 @@ export function ReconCalcModal({
             />
           </div>
         </div>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 13 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "var(--grid-2col)", gap: 13 }}>
           <div className={formStyles.field}>
             <label className={formStyles.label}>Target Dose (mcg)</label>
             <input

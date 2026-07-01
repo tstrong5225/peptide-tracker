@@ -82,7 +82,7 @@ export function AddEditVialModal({
             />
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 13 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "var(--grid-2col)", gap: 13 }}>
             <div className={formStyles.field}>
               <label className={formStyles.label}>Vial Amount (mg)</label>
               <input
@@ -159,7 +159,7 @@ export function AddEditVialModal({
                 >
                   Custom Device Setup
                 </div>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 10 }}>
+                <div style={{ display: "grid", gridTemplateColumns: "var(--grid-3col)", gap: 10 }}>
                   <div className={formStyles.field}>
                     <label className={formStyles.label}>Device name</label>
                     <input
@@ -277,7 +277,7 @@ export function AddEditVialModal({
             >
               Storage &amp; Costs <span style={{ fontWeight: 500, textTransform: "none" }}>(optional)</span>
             </div>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 13 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "var(--grid-3col)", gap: 13 }}>
               <div className={formStyles.field}>
                 <label className={formStyles.label}>Reconstituted On</label>
                 <input
@@ -329,7 +329,7 @@ export function AddEditVialModal({
               Research Details <span style={{ fontWeight: 500, textTransform: "none" }}>(optional)</span>
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 13 }}>
+              <div style={{ display: "grid", gridTemplateColumns: "var(--grid-2col)", gap: 13 }}>
                 <div className={formStyles.field}>
                   <label className={formStyles.label}>Vendor / Manufacturer</label>
                   <input
@@ -351,7 +351,7 @@ export function AddEditVialModal({
                   />
                 </div>
               </div>
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 13 }}>
+              <div style={{ display: "grid", gridTemplateColumns: "var(--grid-2col)", gap: 13 }}>
                 <div className={formStyles.field}>
                   <label className={formStyles.label}>Batch Number</label>
                   <input

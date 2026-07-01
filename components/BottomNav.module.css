@@ -1,0 +1,64 @@
+.nav {
+  /* Hidden on desktop */
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 200;
+    background: var(--pt-header-bg);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    height: calc(var(--bottom-nav-h) + var(--safe-bottom));
+    padding-bottom: var(--safe-bottom);
+    align-items: stretch;
+  }
+}
+
+.tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  padding: 8px 4px;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.tab svg {
+  opacity: 0.5;
+}
+
+.tabActive {
+  color: white;
+}
+
+.tabActive svg {
+  opacity: 1;
+}
+
+.tabActive .dot {
+  display: block;
+}
+
+.dot {
+  display: none;
+  width: 4px;
+  height: 4px;
+  background: var(--pt-accent);
+  border-radius: 99px;
+  margin-top: -2px;
+}

@@ -216,3 +216,53 @@ select {
     opacity: 1;
   }
 }
+
+/* ── Mobile / PWA ── */
+
+/* Bottom nav height + iPhone safe area padding for all page main areas */
+:root {
+  --bottom-nav-h: 64px;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --content-padding-bottom: calc(var(--bottom-nav-h) + var(--safe-bottom) + 16px);
+
+  /* Responsive inline grid helpers — use var() in style={} props */
+  --grid-2col: 1fr 1fr;
+  --grid-3col: 1fr 1fr 1fr;
+  --grid-4col: repeat(4, 1fr);
+}
+
+@media (max-width: 480px) {
+  :root {
+    --grid-2col: 1fr;
+    --grid-3col: 1fr;
+    --grid-4col: repeat(2, 1fr); /* site picker: 4 cols → 2 cols */
+  }
+}
+
+/* Bump touch targets to 44px minimum on all interactive controls */
+@media (max-width: 768px) {
+  button, a, [role="button"] {
+    min-height: 36px;
+  }
+}
+
+/* All <main> content areas get bottom padding on mobile so BottomNav
+   doesn't cover the last row of content. All page layouts use <main>. */
+@media (max-width: 768px) {
+  main {
+    padding-bottom: var(--content-padding-bottom);
+  }
+}
+
+/* 2-column grids collapse to 1 on very narrow screens */
+@media (max-width: 480px) {
+  [class*="stabilityGrid"],
+  [class*="statGrid"] {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Ensure body fills the safe area on notched iPhones */
+body {
+  padding-bottom: var(--safe-bottom);
+}

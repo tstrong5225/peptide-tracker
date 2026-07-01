@@ -115,3 +115,45 @@
   font-weight: 700;
   cursor: pointer;
 }
+
+/* ── Mobile layout ── */
+@media (max-width: 768px) {
+  .bar {
+    padding: 0 16px;
+    gap: 10px;
+  }
+
+  /* Hide the main nav — moved to BottomNav */
+  .nav {
+    display: none;
+  }
+
+  /* Hide context actions (Add Vial, etc) — actions live in page body on mobile */
+  .context {
+    display: none;
+  }
+
+  /* Shrink logo box */
+  .logoBox {
+    padding: 3px 8px;
+  }
+
+  /* Hide email — too cramped on phone */
+  .email {
+    display: none;
+  }
+
+  /* Shrink the wordmark a bit */
+  .brandTitle {
+    font-size: 12px;
+  }
+  .brandSubtitle {
+    display: none;
+  }
+
+  /* Smaller sign-out label on phone */
+  .signOut {
+    padding: 7px 10px;
+    font-size: 11px;
+  }
+}

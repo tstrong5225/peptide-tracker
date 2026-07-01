@@ -69,7 +69,7 @@ export function OutlierWarningModal({
           This dose is significantly higher than your previous logged entries for {peptideName}.
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 16 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "var(--grid-2col)", gap: 10, marginBottom: 16 }}>
           <div
             style={{
               background: "var(--pt-danger-bg)",
