@@ -1,0 +1,16 @@
+name: Send dose reminders
+
+on:
+  schedule:
+    - cron: "0 * * * *"   # every hour UTC (GitHub Actions, free tier)
+  workflow_dispatch:        # allow manual trigger from GitHub UI
+
+jobs:
+  remind:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping reminder cron endpoint
+        run: |
+          curl -sf -X GET \
+            "${{ vars.APP_URL }}/api/cron/reminders" \
+            -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"
