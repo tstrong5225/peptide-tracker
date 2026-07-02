@@ -16,6 +16,8 @@ export type ProtocolCardData = {
   status: "active" | "completed" | "upcoming";
 };
 
+type VialOption = { id: string; name: string };
+
 const STATUS_STYLE: Record<string, { bg: string; fg: string; label: string }> = {
   active: { bg: "var(--pt-success-bg)", fg: "var(--pt-success-fg)", label: "Active" },
   completed: { bg: "var(--pt-neutral-bg)", fg: "var(--pt-neutral-fg)", label: "Completed" },
@@ -26,18 +28,25 @@ export function ProtocolsPage({
   email,
   isAdmin,
   cards,
+  vials,
 }: {
   email: string;
   isAdmin: boolean;
   cards: ProtocolCardData[];
+  vials?: VialOption[];
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [showCreate, setShowCreate] = useState(false);
   const [cloneFrom, setCloneFrom] = useState<ProtocolRow | null>(null);
+  const [editTarget, setEditTarget] = useState<ProtocolRow | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<ProtocolRow | null>(null);
 
   const hasReminders = cards.some((c) => !!c.protocol.reminder_time);
+
+  function refresh() {
+    startTransition(() => { router.refresh(); });
+  }
 
   return (
     <div style={{ minHeight: "100vh", display: "flex", flexDirection: "column" }}>
@@ -138,6 +147,21 @@ export function ProtocolsPage({
                       <span className={styles.statusBadge} style={{ background: s.bg, color: s.fg }}>
                         {s.label}
                       </span>
+                      {/* Edit button */}
+                      <button
+                        type="button"
+                        title="Edit protocol"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setEditTarget(protocol);
+                        }}
+                        disabled={isPending}
+                        style={{ background: "none", border: "none", cursor: "pointer", color: "var(--pt-muted-2)", padding: 4, display: "flex" }}
+                      >
+                        <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+                          <path d="M11.5 2.5a1.5 1.5 0 0 1 2.121 2.121L5.5 12.743l-3 .757.757-3L11.5 2.5z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </button>
                       {/* Clone button */}
                       <button
                         type="button"
@@ -216,17 +240,29 @@ export function ProtocolsPage({
       </main>
 
       {showCreate ? (
-        <CreateProtocolModal onClose={() => setShowCreate(false)} onSaved={() => setShowCreate(false)} />
+        <CreateProtocolModal
+          vials={vials}
+          onClose={() => setShowCreate(false)}
+          onSaved={() => { setShowCreate(false); refresh(); }}
+        />
       ) : null}
 
       {cloneFrom ? (
         <CreateProtocolModal
           initialData={cloneFrom}
+          vials={vials}
           onClose={() => setCloneFrom(null)}
-          onSaved={() => {
-            setCloneFrom(null);
-            startTransition(() => { router.refresh(); });
-          }}
+          onSaved={() => { setCloneFrom(null); refresh(); }}
+        />
+      ) : null}
+
+      {editTarget ? (
+        <CreateProtocolModal
+          initialData={editTarget}
+          editMode
+          vials={vials}
+          onClose={() => setEditTarget(null)}
+          onSaved={() => { setEditTarget(null); refresh(); }}
         />
       ) : null}
 

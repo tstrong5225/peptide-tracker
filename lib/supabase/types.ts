@@ -89,6 +89,7 @@ type Protocol = {
   notes: string | null;
   reminder_time: string | null;
   reminder_timezone: string;
+  vial_id: string | null;
   created_at: string;
 };
 

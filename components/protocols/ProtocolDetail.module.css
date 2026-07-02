@@ -6,6 +6,12 @@
   width: 100%;
 }
 
+@media (max-width: 768px) {
+  .main {
+    padding-bottom: var(--content-padding-bottom);
+  }
+}
+
 .backBtn {
   background: none;
   border: none;

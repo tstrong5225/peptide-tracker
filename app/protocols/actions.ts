@@ -38,6 +38,7 @@ export async function saveProtocol(
   const selectedDaysRaw = str(formData, "selectedDays");
   const cycleOn = num(formData, "cycleOn");
   const cycleOff = num(formData, "cycleOff");
+  const vialId = str(formData, "vialId") || null;
 
   if (!name || !peptide || !startDate) {
     return { error: "Protocol name, peptide, and start date are required." };
@@ -63,6 +64,7 @@ export async function saveProtocol(
     notes,
     reminder_time: reminderTime,
     reminder_timezone: reminderTimezone,
+    vial_id: vialId,
   };
 
   const { error } = id
@@ -105,6 +107,7 @@ export async function cloneProtocol(id: string): Promise<ActionState> {
     notes: source.notes,
     reminder_time: source.reminder_time,
     reminder_timezone: source.reminder_timezone ?? "UTC",
+    vial_id: source.vial_id,
   });
 
   if (error) return { error: error.message };

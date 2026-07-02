@@ -116,6 +116,21 @@
   cursor: pointer;
 }
 
+/* Profile icon: hidden on desktop, shown on mobile */
+.profileIcon {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.85);
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
 /* ── Mobile layout ── */
 @media (max-width: 768px) {
   .bar {
@@ -128,7 +143,7 @@
     display: none;
   }
 
-  /* Hide context actions (Add Vial, etc) — actions live in page body on mobile */
+  /* Hide context actions — actions live in page body on mobile */
   .context {
     display: none;
   }
@@ -143,7 +158,7 @@
     display: none;
   }
 
-  /* Shrink the wordmark a bit */
+  /* Shrink the wordmark */
   .brandTitle {
     font-size: 12px;
   }
@@ -151,9 +166,13 @@
     display: none;
   }
 
-  /* Smaller sign-out label on phone */
-  .signOut {
-    padding: 7px 10px;
-    font-size: 11px;
+  /* Hide desktop sign-out on mobile — moved to Profile page */
+  .signOutForm {
+    display: none;
+  }
+
+  /* Show profile icon on mobile */
+  .profileIcon {
+    display: flex;
   }
 }

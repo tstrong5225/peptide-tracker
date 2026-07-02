@@ -40,12 +40,12 @@ const TABS = [
     ),
   },
   {
-    href: "/export",
-    label: "Export",
+    href: "/profile",
+    label: "Profile",
     icon: (
       <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-        <path d="M11 3v10M7 9l4 4 4-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
-        <path d="M3 15v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+        <circle cx="11" cy="8" r="3.5" stroke="currentColor" strokeWidth="1.6" fill="none" />
+        <path d="M4 19c0-3.866 3.134-7 7-7h2c3.866 0 7 3.134 7 7" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" fill="none" />
       </svg>
     ),
   },
@@ -57,7 +57,10 @@ export function BottomNav() {
   return (
     <nav className={styles.nav} aria-label="Main navigation">
       {TABS.map((tab) => {
-        const isActive = tab.href === "/" ? pathname === "/" || pathname.startsWith("/vials") : pathname.startsWith(tab.href);
+        const isActive =
+          tab.href === "/"
+            ? pathname === "/" || pathname.startsWith("/vials")
+            : pathname.startsWith(tab.href);
         return (
           <Link key={tab.href} href={tab.href} className={`${styles.tab} ${isActive ? styles.tabActive : ""}`}>
             {tab.icon}

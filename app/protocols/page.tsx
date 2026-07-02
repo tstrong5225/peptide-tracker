@@ -14,6 +14,7 @@ export default async function Protocols() {
     .order("created_at", { ascending: false });
 
   const vials = await getVialsForUser(supabase, user.id);
+  const vialOptions = vials.map((v) => ({ id: v.id, name: v.name }));
 
   const cards: ProtocolCardData[] = await Promise.all(
     (protocols ?? []).map(async (proto) => {
@@ -29,6 +30,7 @@ export default async function Protocols() {
       email={user.email || ""}
       isAdmin={!!profile?.is_admin}
       cards={cards}
+      vials={vialOptions}
     />
   );
 }

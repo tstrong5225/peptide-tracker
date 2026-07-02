@@ -6,6 +6,12 @@
   width: 100%;
 }
 
+@media (max-width: 768px) {
+  .main {
+    padding-bottom: var(--content-padding-bottom);
+  }
+}
+
 .heading {
   font-size: 22px;
   font-weight: 800;

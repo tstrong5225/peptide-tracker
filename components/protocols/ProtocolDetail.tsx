@@ -1,8 +1,10 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { NotificationToggle } from "./NotificationToggle";
+import { CreateProtocolModal } from "./CreateProtocolModal";
 import { patternLabel, formatReminderDisplay, type Adherence, type CalendarDay, type ProtocolRow } from "@/lib/protocol-logic";
 import styles from "./ProtocolDetail.module.css";
 
@@ -14,6 +16,8 @@ const STATUS_STYLE: Record<string, { bg: string; fg: string; label: string }> = 
 
 const WEEK_HEADER = ["S", "M", "T", "W", "T", "F", "S"];
 
+type VialOption = { id: string; name: string };
+
 export function ProtocolDetail({
   email,
   isAdmin,
@@ -22,6 +26,8 @@ export function ProtocolDetail({
   status,
   calendar,
   streak,
+  linkedVial,
+  vialOptions,
 }: {
   email: string;
   isAdmin: boolean;
@@ -30,8 +36,11 @@ export function ProtocolDetail({
   status: "active" | "completed" | "upcoming";
   calendar: { leadingBlanks: number; days: CalendarDay[] };
   streak: number;
+  linkedVial?: VialOption | null;
+  vialOptions?: VialOption[];
 }) {
   const router = useRouter();
+  const [showEdit, setShowEdit] = useState(false);
   const s = STATUS_STYLE[status];
   const isCycle = protocol.pattern === "xony";
 
@@ -64,23 +73,93 @@ export function ProtocolDetail({
               ) : null}
             </div>
             <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 8, flexShrink: 0 }}>
-              <span
-                style={{
-                  background: s.bg,
-                  color: s.fg,
-                  fontSize: 11,
-                  fontWeight: 700,
-                  padding: "4px 12px",
-                  borderRadius: 99,
-                }}
-              >
-                {s.label}
-              </span>
+              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <span
+                  style={{
+                    background: s.bg,
+                    color: s.fg,
+                    fontSize: 11,
+                    fontWeight: 700,
+                    padding: "4px 12px",
+                    borderRadius: 99,
+                  }}
+                >
+                  {s.label}
+                </span>
+                {/* Edit button */}
+                <button
+                  type="button"
+                  title="Edit protocol"
+                  onClick={() => setShowEdit(true)}
+                  style={{
+                    background: "none",
+                    border: "1.5px solid var(--pt-border-soft)",
+                    borderRadius: 8,
+                    padding: "5px 8px",
+                    cursor: "pointer",
+                    color: "var(--pt-muted)",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 4,
+                    fontSize: 11,
+                    fontWeight: 600,
+                  }}
+                >
+                  <svg width="11" height="11" viewBox="0 0 16 16" fill="none">
+                    <path d="M11.5 2.5a1.5 1.5 0 0 1 2.121 2.121L5.5 12.743l-3 .757.757-3L11.5 2.5z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                  Edit
+                </button>
+              </div>
               {protocol.reminder_time ? (
                 <NotificationToggle />
               ) : null}
             </div>
           </div>
+
+          {/* Linked vial row */}
+          {linkedVial ? (
+            <div
+              style={{
+                fontSize: 12,
+                color: "var(--pt-muted)",
+                marginBottom: 10,
+                padding: "8px 12px",
+                background: "var(--pt-surface-soft)",
+                borderRadius: 8,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                gap: 8,
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <svg width="13" height="13" viewBox="0 0 22 22" fill="none">
+                  <rect x="8" y="1" width="6" height="5" rx="2" fill="currentColor" opacity="0.9" />
+                  <rect x="5.5" y="5.5" width="11" height="15" rx="3.5" fill="currentColor" opacity="0.3" />
+                  <rect x="5.5" y="5.5" width="11" height="9" rx="3.5" fill="currentColor" opacity="0.7" />
+                </svg>
+                Linked to <strong style={{ color: "var(--pt-ink)" }}>{linkedVial.name}</strong>
+              </div>
+              <button
+                type="button"
+                onClick={() => router.push(`/vials/${linkedVial.id}`)}
+                style={{
+                  background: "var(--pt-accent)",
+                  color: "white",
+                  border: "none",
+                  borderRadius: 8,
+                  padding: "5px 12px",
+                  fontSize: 11,
+                  fontWeight: 700,
+                  cursor: "pointer",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                Log Dose
+              </button>
+            </div>
+          ) : null}
 
           {protocol.reminder_time ? (
             <div
@@ -176,6 +255,19 @@ export function ProtocolDetail({
           </div>
         </div>
       </main>
+
+      {showEdit ? (
+        <CreateProtocolModal
+          initialData={protocol}
+          editMode
+          vials={vialOptions}
+          onClose={() => setShowEdit(false)}
+          onSaved={() => {
+            setShowEdit(false);
+            router.refresh();
+          }}
+        />
+      ) : null}
     </div>
   );
 }

@@ -19,6 +19,9 @@ export default async function ProtocolDetailPage({ params }: { params: Promise<{
   const calendar = buildProtocolCalendar(protocol, dosedDates);
   const streak = getStreak(dosedDates);
 
+  const vialOptions = vials.map((v) => ({ id: v.id, name: v.name }));
+  const linkedVial = protocol.vial_id ? (vialOptions.find((v) => v.id === protocol.vial_id) ?? null) : null;
+
   return (
     <ProtocolDetail
       email={user.email || ""}
@@ -28,6 +31,8 @@ export default async function ProtocolDetailPage({ params }: { params: Promise<{
       status={status}
       calendar={calendar}
       streak={streak}
+      linkedVial={linkedVial}
+      vialOptions={vialOptions}
     />
   );
 }

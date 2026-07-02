@@ -66,20 +66,26 @@ export function AppHeader({
               </Link>
             ) : null}
           </nav>
-          {/* Hidden on mobile via .context class */}
           <div className={styles.context}>{context}</div>
           <div className={styles.right}>
             <ThemeToggle />
             <span className={styles.email}>{email}</span>
-            <form action={signOut}>
+            {/* Desktop: sign out button */}
+            <form action={signOut} className={styles.signOutForm}>
               <button type="submit" className={styles.signOut}>
                 Sign Out
               </button>
             </form>
+            {/* Mobile: profile icon link (replaces sign-out) */}
+            <Link href="/profile" className={styles.profileIcon} title="Profile & Settings">
+              <svg width="20" height="20" viewBox="0 0 22 22" fill="none">
+                <circle cx="11" cy="8" r="3.5" stroke="currentColor" strokeWidth="1.8" fill="none" />
+                <path d="M4 19c0-3.866 3.134-7 7-7h2c3.866 0 7 3.134 7 7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" fill="none" />
+              </svg>
+            </Link>
           </div>
         </div>
       </header>
-      {/* Fixed bottom tab bar — only visible on mobile via CSS */}
       <BottomNav />
     </>
   );

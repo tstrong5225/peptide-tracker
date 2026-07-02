@@ -6,37 +6,44 @@ import formStyles from "@/components/ui/Form.module.css";
 import { PROTOCOL_PATTERNS, WEEKDAYS, COMMON_TIMEZONES, type ProtocolRow } from "@/lib/protocol-logic";
 import { saveProtocol, type ActionState } from "@/app/protocols/actions";
 
+type VialOption = { id: string; name: string };
+
 export function CreateProtocolModal({
   onClose,
   onSaved,
   initialData,
+  editMode = false,
+  vials,
 }: {
   onClose: () => void;
   onSaved: () => void;
   initialData?: ProtocolRow;
+  editMode?: boolean;
+  vials?: VialOption[];
 }) {
-  const isClone = !!initialData;
+  // editMode=true + initialData = editing existing protocol
+  // editMode=false + initialData = cloning
+  const isEdit = editMode && !!initialData;
+  const isClone = !editMode && !!initialData;
   const today = new Date().toISOString().slice(0, 10);
 
-  // Auto-detect browser timezone, falling back to UTC
   const browserTz = (() => {
-    try {
-      return Intl.DateTimeFormat().resolvedOptions().timeZone;
-    } catch {
-      return "UTC";
-    }
+    try { return Intl.DateTimeFormat().resolvedOptions().timeZone; } catch { return "UTC"; }
   })();
 
-  // Pre-compute defaults outside JSX to avoid TypeScript control-flow narrowing issues
   const src = initialData ?? null;
-  const defaultName = src ? `${src.name} (copy)` : "";
+  const defaultName = isEdit ? (src?.name ?? "") : (src ? `${src.name} (copy)` : "");
   const defaultPeptide = src?.peptide ?? "";
-  const defaultStartDate = isClone ? today : (src?.start_date ?? "");
+  const defaultStartDate = isEdit ? (src?.start_date ?? today) : (isClone ? today : "");
   const defaultDuration = src?.duration ?? 28;
   const defaultReminderTime = src?.reminder_time ?? "";
   const defaultReminderTz = src?.reminder_timezone ?? browserTz;
   const defaultNotes = src?.notes ?? "";
-  const defaultSubtitle = src ? `Copying "${src.name}" — starts today` : undefined;
+  const defaultVialId = src?.vial_id ?? "";
+  const defaultSubtitle = isClone && src ? `Copying "${src.name}" — starts today` : undefined;
+
+  const modalTitle = isEdit ? "Edit Protocol" : (isClone ? "Clone Protocol" : "New Protocol");
+  const submitLabel = isEdit ? "Save Changes" : (isClone ? "Clone Protocol" : "Save Protocol");
 
   const [state, formAction, isPending] = useActionState<ActionState, FormData>(
     async (prevState, formData) => {
@@ -65,13 +72,10 @@ export function CreateProtocolModal({
   return (
     <Modal onClose={onClose} maxWidth={560}>
       <form action={formAction}>
-        {/* Hidden: pass ID only when editing (not cloning) */}
+        {isEdit && src ? <input type="hidden" name="id" value={src.id} /> : null}
         <input type="hidden" name="pattern" value={pattern} />
         <input type="hidden" name="selectedDays" value={JSON.stringify(selectedDays)} />
-        <ModalHeader
-          title={isClone ? "Clone Protocol" : "New Protocol"}
-          subtitle={defaultSubtitle}
-        />
+        <ModalHeader title={modalTitle} subtitle={defaultSubtitle} />
         <ModalBody>
           {state.error ? <div className={formStyles.error}>{state.error}</div> : null}
 
@@ -97,6 +101,41 @@ export function CreateProtocolModal({
               required
               className={formStyles.input}
             />
+          </div>
+
+          {/* Vial link */}
+          <div className={formStyles.field}>
+            <label className={formStyles.label}>Linked Vial <span style={{ fontWeight: 500, textTransform: "none", letterSpacing: 0, fontSize: 11 }}>(optional)</span></label>
+            {vials && vials.length > 0 ? (
+              <>
+                <select
+                  name="vialId"
+                  defaultValue={defaultVialId}
+                  className={formStyles.input}
+                  style={{ cursor: "pointer" }}
+                >
+                  <option value="">— No vial linked —</option>
+                  {vials.map((v) => (
+                    <option key={v.id} value={v.id}>{v.name}</option>
+                  ))}
+                </select>
+                <div style={{ fontSize: 11, color: "var(--pt-muted-2)", marginTop: 5 }}>
+                  Link a vial to log doses directly from this protocol and track inventory automatically.
+                </div>
+              </>
+            ) : (
+              <div
+                style={{
+                  fontSize: 12,
+                  color: "var(--pt-muted-2)",
+                  padding: "10px 14px",
+                  background: "var(--pt-surface-soft)",
+                  borderRadius: 10,
+                }}
+              >
+                No vials yet — create a vial in the Vials section first, then link it here.
+              </div>
+            )}
           </div>
 
           <div>
@@ -134,7 +173,6 @@ export function CreateProtocolModal({
             </div>
           </div>
 
-          {/* Cycle fields — shown for xony */}
           {pattern === "xony" ? (
             <div>
               <label className={formStyles.label} style={{ display: "block", marginBottom: 8 }}>
@@ -183,7 +221,6 @@ export function CreateProtocolModal({
             </div>
           ) : null}
 
-          {/* Weekly day picker */}
           {pattern === "weekly" ? (
             <div>
               <label className={formStyles.label} style={{ display: "block", marginBottom: 8 }}>
@@ -256,7 +293,7 @@ export function CreateProtocolModal({
 
           <div>
             <label className={formStyles.label} style={{ display: "block", marginBottom: 8 }}>
-              Reminder (optional)
+              Reminder <span style={{ fontWeight: 500, textTransform: "none", letterSpacing: 0, fontSize: 11 }}>(optional)</span>
             </label>
             <div style={{ display: "grid", gridTemplateColumns: "var(--grid-2col)", gap: 13 }}>
               <div className={formStyles.field}>
@@ -276,14 +313,11 @@ export function CreateProtocolModal({
                   className={formStyles.input}
                   style={{ cursor: "pointer" }}
                 >
-                  {/* Show browser-detected timezone at top if not in the common list */}
                   {!COMMON_TIMEZONES.some((t) => t.value === browserTz) ? (
                     <option value={browserTz}>Auto-detected: {browserTz}</option>
                   ) : null}
                   {COMMON_TIMEZONES.map((tz) => (
-                    <option key={tz.value} value={tz.value}>
-                      {tz.label}
-                    </option>
+                    <option key={tz.value} value={tz.value}>{tz.label}</option>
                   ))}
                 </select>
               </div>
@@ -319,7 +353,7 @@ export function CreateProtocolModal({
               Cancel
             </button>
             <button type="submit" disabled={isPending} className={formStyles.buttonPrimary} style={{ flex: 2 }}>
-              {isPending ? "Saving…" : isClone ? "Clone Protocol" : "Save Protocol"}
+              {isPending ? "Saving…" : submitLabel}
             </button>
           </div>
         </ModalBody>

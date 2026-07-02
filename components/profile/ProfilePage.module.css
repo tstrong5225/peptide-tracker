@@ -1,0 +1,199 @@
+.main {
+  flex: 1;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 28px 24px;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .main {
+    padding-bottom: var(--content-padding-bottom);
+  }
+}
+
+.profileCard {
+  background: var(--pt-surface);
+  border-radius: 22px;
+  box-shadow: var(--pt-card-shadow);
+  padding: 32px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--pt-accent);
+  color: white;
+  font-size: 26px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+}
+
+.emailText {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--pt-ink);
+  margin-bottom: 4px;
+}
+
+.joinedText {
+  font-size: 13px;
+  color: var(--pt-muted);
+}
+
+.section {
+  background: var(--pt-surface);
+  border-radius: 18px;
+  box-shadow: var(--pt-card-shadow);
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+
+.sectionTitle {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--pt-muted);
+  padding: 12px 18px 8px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border-top: 1px solid var(--pt-border-soft);
+}
+
+.rowLabel {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--pt-ink);
+}
+
+.linkRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border-top: 1px solid var(--pt-border-soft);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--pt-ink);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.linkRow:hover {
+  background: var(--pt-surface-soft);
+}
+
+.signOutBtn {
+  display: block;
+  width: 100%;
+  padding: 14px 18px;
+  border: none;
+  border-top: 1px solid var(--pt-border-soft);
+  background: none;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--pt-ink);
+  cursor: pointer;
+}
+
+.signOutBtn:hover {
+  background: var(--pt-surface-soft);
+}
+
+.deleteBtn {
+  display: block;
+  width: 100%;
+  padding: 14px 18px;
+  border: none;
+  border-top: 1px solid var(--pt-border-soft);
+  background: none;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--pt-danger-icon);
+  cursor: pointer;
+}
+
+.deleteBtn:hover {
+  background: var(--pt-danger-bg);
+}
+
+/* Delete confirmation modal */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.confirmCard {
+  background: var(--pt-surface);
+  border-radius: 22px;
+  padding: 28px 24px;
+  max-width: 400px;
+  width: 100%;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.35);
+}
+
+.confirmTitle {
+  font-size: 18px;
+  font-weight: 800;
+  margin-bottom: 10px;
+}
+
+.confirmBody {
+  font-size: 14px;
+  color: var(--pt-muted);
+  line-height: 1.6;
+  margin-bottom: 22px;
+}
+
+.cancelBtn {
+  border: 1.5px solid var(--pt-border-soft);
+  background: var(--pt-surface);
+  color: var(--pt-ink);
+  border-radius: 12px;
+  padding: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.cancelBtn:disabled {
+  opacity: 0.5;
+}
+
+.confirmDeleteBtn {
+  border: none;
+  background: var(--pt-danger-icon);
+  color: white;
+  border-radius: 12px;
+  padding: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.confirmDeleteBtn:disabled {
+  opacity: 0.6;
+}
