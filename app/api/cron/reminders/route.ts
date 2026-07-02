@@ -6,12 +6,6 @@ import { isDoseDay, getProtocolStatus } from "@/lib/protocol-logic";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-webpush.setVapidDetails(
-  `mailto:${process.env.VAPID_SUBJECT ?? "admin@example.com"}`,
-  process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY ?? "",
-  process.env.VAPID_PRIVATE_KEY ?? "",
-);
-
 function getLocalHour(timezone: string, now: Date): number {
   try {
     const parts = new Intl.DateTimeFormat("en-US", {
@@ -27,7 +21,17 @@ function getLocalHour(timezone: string, now: Date): number {
 }
 
 export async function GET(req: Request) {
-  // Vercel passes CRON_SECRET in the Authorization header
+  const vapidPublic = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
+  const vapidPrivate = process.env.VAPID_PRIVATE_KEY;
+  if (!vapidPublic || !vapidPrivate) {
+    return NextResponse.json({ error: "VAPID keys not configured" }, { status: 500 });
+  }
+  webpush.setVapidDetails(
+    `mailto:${process.env.VAPID_SUBJECT ?? "admin@example.com"}`,
+    vapidPublic,
+    vapidPrivate,
+  );
+
   const secret = process.env.CRON_SECRET;
   if (secret) {
     const auth = req.headers.get("authorization");
