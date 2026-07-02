@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { AppHeader } from "@/components/AppHeader";
 import { NotificationToggle } from "./NotificationToggle";
-import { patternLabel, type Adherence, type CalendarDay, type ProtocolRow } from "@/lib/protocol-logic";
+import { patternLabel, formatReminderDisplay, type Adherence, type CalendarDay, type ProtocolRow } from "@/lib/protocol-logic";
 import styles from "./ProtocolDetail.module.css";
 
 const STATUS_STYLE: Record<string, { bg: string; fg: string; label: string }> = {
@@ -100,7 +100,7 @@ export function ProtocolDetail({
                 <circle cx="10" cy="10" r="8" stroke="var(--pt-muted)" strokeWidth="1.5" />
                 <path d="M10 6v4l3 2" stroke="var(--pt-muted)" strokeWidth="1.5" strokeLinecap="round" />
               </svg>
-              Reminder set for {protocol.reminder_time.slice(0, 5)} UTC
+              Reminder set for {formatReminderDisplay(protocol.reminder_time, protocol.reminder_timezone)}
               {isCycle ? ` · dose days only (${protocol.cycle_on} on / ${protocol.cycle_off} off)` : ""}
             </div>
           ) : null}

@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { AppHeader } from "@/components/AppHeader";
 import { ConfirmDeleteModal } from "@/components/vials/ConfirmDeleteModal";
-import { patternLabel, type Adherence, type ProtocolRow } from "@/lib/protocol-logic";
+import { patternLabel, formatReminderDisplay, type Adherence, type ProtocolRow } from "@/lib/protocol-logic";
 import { deleteProtocol } from "@/app/protocols/actions";
 import { NotificationToggle } from "./NotificationToggle";
 import { CreateProtocolModal } from "./CreateProtocolModal";
@@ -130,7 +130,7 @@ export function ProtocolsPage({
                       <div className={styles.cardName}>{protocol.name}</div>
                       <div className={styles.cardSub}>
                         {patternLabel(protocol)} · {protocol.peptide} · Started {startStr}
-                        {protocol.reminder_time ? ` · ⏰ ${protocol.reminder_time.slice(0, 5)} UTC` : ""}
+                        {protocol.reminder_time ? ` · ⏰ ${formatReminderDisplay(protocol.reminder_time, protocol.reminder_timezone)}` : ""}
                       </div>
                       {protocol.notes ? <div className={styles.cardSource}>Source: {protocol.notes}</div> : null}
                     </div>

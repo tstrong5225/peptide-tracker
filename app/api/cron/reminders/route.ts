@@ -12,6 +12,20 @@ webpush.setVapidDetails(
   process.env.VAPID_PRIVATE_KEY ?? "",
 );
 
+function getLocalHour(timezone: string, now: Date): number {
+  try {
+    const parts = new Intl.DateTimeFormat("en-US", {
+      hour: "2-digit",
+      hour12: false,
+      timeZone: timezone,
+    }).formatToParts(now);
+    const h = Number(parts.find((p) => p.type === "hour")?.value ?? "99");
+    return Number.isNaN(h) ? now.getUTCHours() : h;
+  } catch {
+    return now.getUTCHours();
+  }
+}
+
 export async function GET(req: Request) {
   // Vercel passes CRON_SECRET in the Authorization header
   const secret = process.env.CRON_SECRET;
@@ -24,7 +38,6 @@ export async function GET(req: Request) {
 
   const supabase = createAdminClient();
   const now = new Date();
-  const currentHour = now.getUTCHours();
   const currentMinute = now.getUTCMinutes();
 
   // Fetch all protocols with a reminder_time set
@@ -35,17 +48,22 @@ export async function GET(req: Request) {
 
   if (!protocols || protocols.length === 0) return NextResponse.json({ sent: 0 });
 
-  // Filter to those whose reminder falls within this UTC hour
+  // Filter to those whose reminder hour (in their stored timezone) matches the current time
   const due = protocols.filter((p) => {
     if (!p.reminder_time) return false;
     if (getProtocolStatus(p, now) !== "active") return false;
 
-    const [h, m] = (p.reminder_time as string).split(":").map(Number);
-    if (Number.isNaN(h)) return false;
-    // Match exact hour; only fire once per hour (within first 10 min window)
-    if (h !== currentHour || currentMinute > 10) return false;
+    const [reminderH] = (p.reminder_time as string).split(":").map(Number);
+    if (Number.isNaN(reminderH)) return false;
 
-    // For xony, skip off days
+    // Fire once per hour within the first 10 minutes
+    if (currentMinute > 10) return false;
+
+    const tz = (p.reminder_timezone as string | null) ?? "UTC";
+    const localH = getLocalHour(tz, now);
+    if (reminderH !== localH) return false;
+
+    // For xony, skip off days (compute in the protocol's timezone)
     if (p.pattern === "xony") {
       const start = new Date(`${p.start_date as string}T00:00:00`);
       const todayStart = new Date(now);
@@ -58,10 +76,8 @@ export async function GET(req: Request) {
 
   if (due.length === 0) return NextResponse.json({ sent: 0 });
 
-  // Collect unique user_ids
   const userIds = [...new Set(due.map((p) => p.user_id as string))];
 
-  // Get all push subscriptions for those users
   const { data: subs } = await supabase
     .from("push_subscriptions")
     .select("*")
@@ -69,7 +85,6 @@ export async function GET(req: Request) {
 
   if (!subs || subs.length === 0) return NextResponse.json({ sent: 0 });
 
-  // Build a map: userId → list of protocol names due
   const userProtocols = new Map<string, string[]>();
   for (const p of due) {
     const uid = p.user_id as string;
@@ -94,7 +109,6 @@ export async function GET(req: Request) {
         );
         sent++;
       } catch (err: unknown) {
-        // If subscription expired/invalid, remove it
         const status = (err as { statusCode?: number }).statusCode;
         if (status === 410 || status === 404) {
           await supabase.from("push_subscriptions").delete().eq("id", sub.id);

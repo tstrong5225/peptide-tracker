@@ -34,6 +34,7 @@ export async function saveProtocol(
   const duration = num(formData, "duration") || 28;
   const notes = str(formData, "notes") || null;
   const reminderTime = str(formData, "reminderTime") || null;
+  const reminderTimezone = str(formData, "reminderTimezone") || "UTC";
   const selectedDaysRaw = str(formData, "selectedDays");
   const cycleOn = num(formData, "cycleOn");
   const cycleOff = num(formData, "cycleOff");
@@ -61,6 +62,7 @@ export async function saveProtocol(
     duration,
     notes,
     reminder_time: reminderTime,
+    reminder_timezone: reminderTimezone,
   };
 
   const { error } = id
@@ -102,6 +104,7 @@ export async function cloneProtocol(id: string): Promise<ActionState> {
     duration: source.duration,
     notes: source.notes,
     reminder_time: source.reminder_time,
+    reminder_timezone: source.reminder_timezone ?? "UTC",
   });
 
   if (error) return { error: error.message };

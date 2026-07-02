@@ -88,6 +88,7 @@ type Protocol = {
   duration: number;
   notes: string | null;
   reminder_time: string | null;
+  reminder_timezone: string;
   created_at: string;
 };
 

@@ -24,11 +24,83 @@ export const WEEKDAYS = [
   { value: 6, label: "S" },
 ];
 
+// ─────────────────── Timezone support ───────────────────
+
+export const COMMON_TIMEZONES = [
+  // North America
+  { value: "America/New_York",    label: "Eastern (ET) — New York" },
+  { value: "America/Chicago",     label: "Central (CT) — Chicago" },
+  { value: "America/Denver",      label: "Mountain (MT) — Denver" },
+  { value: "America/Phoenix",     label: "Mountain no DST — Phoenix, AZ" },
+  { value: "America/Los_Angeles", label: "Pacific (PT) — Los Angeles" },
+  { value: "America/Anchorage",   label: "Alaska (AKT)" },
+  { value: "Pacific/Honolulu",    label: "Hawaii (HST)" },
+  { value: "America/Toronto",     label: "Eastern Canada — Toronto" },
+  { value: "America/Vancouver",   label: "Pacific Canada — Vancouver" },
+  // UTC
+  { value: "UTC",                 label: "UTC / GMT" },
+  // Europe
+  { value: "Europe/London",       label: "London (GMT/BST)" },
+  { value: "Europe/Paris",        label: "Paris / Berlin (CET/CEST)" },
+  { value: "Europe/Helsinki",     label: "Helsinki / Kyiv (EET/EEST)" },
+  // Middle East / Asia
+  { value: "Asia/Dubai",          label: "Dubai (GST, UTC+4)" },
+  { value: "Asia/Kolkata",        label: "India (IST, UTC+5:30)" },
+  { value: "Asia/Bangkok",        label: "Bangkok / Jakarta (ICT, UTC+7)" },
+  { value: "Asia/Singapore",      label: "Singapore / KL (SGT, UTC+8)" },
+  { value: "Asia/Tokyo",          label: "Tokyo (JST, UTC+9)" },
+  // Pacific
+  { value: "Australia/Sydney",    label: "Sydney (AEST/AEDT)" },
+  { value: "Pacific/Auckland",    label: "Auckland (NZST/NZDT)" },
+] as const;
+
+function getTzParts(timezone: string, now: Date): { h: number; m: number } {
+  try {
+    const parts = new Intl.DateTimeFormat("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: false,
+      timeZone: timezone,
+    }).formatToParts(now);
+    const h = Number(parts.find((p) => p.type === "hour")?.value ?? "0");
+    const m = Number(parts.find((p) => p.type === "minute")?.value ?? "0");
+    return { h: Number.isNaN(h) ? now.getHours() : h, m: Number.isNaN(m) ? now.getMinutes() : m };
+  } catch {
+    return { h: now.getHours(), m: now.getMinutes() };
+  }
+}
+
+// Returns a human-readable string like "9:00 AM ET" for display in cards and detail.
+export function formatReminderDisplay(
+  reminderTime: string | null,
+  timezone: string | null,
+): string {
+  if (!reminderTime) return "";
+  const [h, m] = reminderTime.split(":").map(Number);
+  if (Number.isNaN(h) || Number.isNaN(m)) return "";
+
+  const tz = timezone ?? "UTC";
+  const hour12 = h % 12 || 12;
+  const ampm = h < 12 ? "AM" : "PM";
+  const mins = String(m).padStart(2, "0");
+
+  let tzAbbr = tz;
+  try {
+    tzAbbr =
+      new Intl.DateTimeFormat("en-US", { timeZone: tz, timeZoneName: "short" })
+        .formatToParts(new Date())
+        .find((p) => p.type === "timeZoneName")?.value ?? tz;
+  } catch {}
+
+  return `${hour12}:${mins} ${ampm} ${tzAbbr}`;
+}
+
+// ─────────────────── Protocol helpers ───────────────────
+
 export function dateKey(d: Date): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
 
-// Returns a human-readable label for a protocol's pattern, including cycle numbers.
 export function patternLabel(proto: Pick<ProtocolRow, "pattern" | "cycle_on" | "cycle_off">): string {
   if (proto.pattern === "xony") {
     const on = proto.cycle_on ?? 5;
@@ -38,7 +110,6 @@ export function patternLabel(proto: Pick<ProtocolRow, "pattern" | "cycle_on" | "
   return PATTERN_LABELS[proto.pattern] ?? proto.pattern;
 }
 
-// Whether a given day-index (0 = start_date) is a scheduled dose day.
 export function isDoseDay(
   proto: Pick<ProtocolRow, "pattern" | "cycle_on" | "cycle_off" | "selected_days">,
   dayIndex: number,
@@ -98,7 +169,6 @@ export function getProtocolAdherence(
     if (dosedDates.has(dateKey(d))) completed++;
   }
 
-  // For daily/fixed: remaining = total - elapsed; for others: count future dose days
   let remaining = 0;
   if (proto.pattern === "daily" || proto.pattern === "fixed") {
     remaining = Math.max(0, total - elapsed);
@@ -199,7 +269,10 @@ export function matchesPeptide(vialName: string, protocolPeptide: string): boole
 }
 
 export function isReminderDue(
-  proto: Pick<ProtocolRow, "start_date" | "duration" | "reminder_time" | "pattern" | "cycle_on" | "cycle_off" | "selected_days">,
+  proto: Pick<
+    ProtocolRow,
+    "start_date" | "duration" | "reminder_time" | "reminder_timezone" | "pattern" | "cycle_on" | "cycle_off" | "selected_days"
+  >,
   dosedToday: boolean,
   now: Date = new Date(),
 ): boolean {
@@ -218,6 +291,11 @@ export function isReminderDue(
   const [h, m] = proto.reminder_time.split(":").map(Number);
   if (Number.isNaN(h) || Number.isNaN(m)) return false;
   const reminderMinutes = h * 60 + m;
-  const nowMinutes = now.getHours() * 60 + now.getMinutes();
+
+  // Compare against current time in the stored timezone
+  const tz = proto.reminder_timezone ?? "UTC";
+  const { h: localH, m: localM } = getTzParts(tz, now);
+  const nowMinutes = localH * 60 + localM;
+
   return nowMinutes >= reminderMinutes;
 }

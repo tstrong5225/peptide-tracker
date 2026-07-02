@@ -3,7 +3,7 @@
 import { useActionState, useState } from "react";
 import { Modal, ModalHeader, ModalBody } from "@/components/ui/Modal";
 import formStyles from "@/components/ui/Form.module.css";
-import { PROTOCOL_PATTERNS, WEEKDAYS, type ProtocolRow } from "@/lib/protocol-logic";
+import { PROTOCOL_PATTERNS, WEEKDAYS, COMMON_TIMEZONES, type ProtocolRow } from "@/lib/protocol-logic";
 import { saveProtocol, type ActionState } from "@/app/protocols/actions";
 
 export function CreateProtocolModal({
@@ -18,6 +18,15 @@ export function CreateProtocolModal({
   const isClone = !!initialData;
   const today = new Date().toISOString().slice(0, 10);
 
+  // Auto-detect browser timezone, falling back to UTC
+  const browserTz = (() => {
+    try {
+      return Intl.DateTimeFormat().resolvedOptions().timeZone;
+    } catch {
+      return "UTC";
+    }
+  })();
+
   // Pre-compute defaults outside JSX to avoid TypeScript control-flow narrowing issues
   const src = initialData ?? null;
   const defaultName = src ? `${src.name} (copy)` : "";
@@ -25,6 +34,7 @@ export function CreateProtocolModal({
   const defaultStartDate = isClone ? today : (src?.start_date ?? "");
   const defaultDuration = src?.duration ?? 28;
   const defaultReminderTime = src?.reminder_time ?? "";
+  const defaultReminderTz = src?.reminder_timezone ?? browserTz;
   const defaultNotes = src?.notes ?? "";
   const defaultSubtitle = src ? `Copying "${src.name}" — starts today` : undefined;
 
@@ -244,16 +254,42 @@ export function CreateProtocolModal({
             </div>
           </div>
 
-          <div className={formStyles.field}>
-            <label className={formStyles.label}>Reminder Time (optional)</label>
-            <input
-              name="reminderTime"
-              type="time"
-              defaultValue={defaultReminderTime}
-              className={formStyles.input}
-            />
+          <div>
+            <label className={formStyles.label} style={{ display: "block", marginBottom: 8 }}>
+              Reminder (optional)
+            </label>
+            <div style={{ display: "grid", gridTemplateColumns: "var(--grid-2col)", gap: 13 }}>
+              <div className={formStyles.field}>
+                <label className={formStyles.label}>Time</label>
+                <input
+                  name="reminderTime"
+                  type="time"
+                  defaultValue={defaultReminderTime}
+                  className={formStyles.input}
+                />
+              </div>
+              <div className={formStyles.field}>
+                <label className={formStyles.label}>Timezone</label>
+                <select
+                  name="reminderTimezone"
+                  defaultValue={defaultReminderTz}
+                  className={formStyles.input}
+                  style={{ cursor: "pointer" }}
+                >
+                  {/* Show browser-detected timezone at top if not in the common list */}
+                  {!COMMON_TIMEZONES.some((t) => t.value === browserTz) ? (
+                    <option value={browserTz}>Auto-detected: {browserTz}</option>
+                  ) : null}
+                  {COMMON_TIMEZONES.map((tz) => (
+                    <option key={tz.value} value={tz.value}>
+                      {tz.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
             <div style={{ fontSize: 11, color: "var(--pt-muted-2)", marginTop: 5 }}>
-              Time is in UTC. Push notifications fire at this hour daily on dose days.
+              Push notifications fire at this local time on dose days.
             </div>
           </div>
 
