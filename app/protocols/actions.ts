@@ -116,6 +116,42 @@ export async function cloneProtocol(id: string): Promise<ActionState> {
   return { success: true };
 }
 
+export async function createQuickVial(input: {
+  name: string;
+  mgInVial: number;
+  mlLiquid: number;
+  plannedDoseMcg: number;
+}): Promise<{ error?: string; vial?: { id: string; name: string } }> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Not signed in." };
+
+  if (!input.name || !input.mgInVial || !input.mlLiquid || !input.plannedDoseMcg) {
+    return { error: "All vial fields are required." };
+  }
+
+  const { data, error } = await supabase
+    .from("vials")
+    .insert({
+      user_id: user.id,
+      name: input.name,
+      mg_in_vial: input.mgInVial,
+      ml_liquid: input.mlLiquid,
+      planned_dose_mcg: input.plannedDoseMcg,
+      device_id: "u100",
+      stability_days: 28,
+    })
+    .select("id, name")
+    .single();
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/");
+  return { vial: { id: data.id, name: data.name } };
+}
+
 export async function deleteProtocol(id: string): Promise<ActionState> {
   const supabase = await createClient();
   const { error } = await supabase.from("protocols").delete().eq("id", id);

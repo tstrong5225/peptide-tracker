@@ -7,6 +7,7 @@ import { type ComputeResult, type VialRow } from "@/lib/vial-math";
 import { logDose, type LogDoseState } from "@/app/vials/actions";
 import { UnitMismatchModal } from "./UnitMismatchModal";
 import { OutlierWarningModal } from "./OutlierWarningModal";
+import { OverLimitWarningModal } from "./OverLimitWarningModal";
 
 const SITES = [
   { key: "Abdomen", label: "Abdomen" },
@@ -26,6 +27,8 @@ const EFFECT_TAGS = [
   { key: "mood", label: "Mood" },
   { key: "isr", label: "ISR" },
 ];
+
+const today = new Date().toISOString().slice(0, 10);
 
 export function LogDoseModal({
   vial,
@@ -59,6 +62,7 @@ export function LogDoseModal({
     Object.fromEntries(EFFECT_TAGS.map((t) => [t.key, false])),
   );
   const [rating, setRating] = useState(0);
+  const [loggedAt, setLoggedAt] = useState(today);
   const [warningDismissed, setWarningDismissed] = useState(false);
 
   function switchUnit(newUnit: "mcg" | "mg") {
@@ -92,6 +96,7 @@ export function LogDoseModal({
     fd.set("notes", notes);
     fd.set("tags", JSON.stringify(tags));
     fd.set("rating", String(rating));
+    fd.set("loggedAt", loggedAt);
     fd.set("confirmed", "true");
     return fd;
   }
@@ -205,6 +210,38 @@ export function LogDoseModal({
                   {unitsDisplay.toFixed(1)} <span style={{ fontSize: 12, fontWeight: 600 }}>units</span>
                 </span>
               </div>
+              {/* Over-limit warning (non-blocking — user can still submit) */}
+              {overLimit ? (
+                <div
+                  style={{
+                    marginTop: 9,
+                    background: "var(--pt-danger-bg)",
+                    border: "1.5px solid var(--pt-danger-border)",
+                    borderRadius: 11,
+                    padding: "10px 14px",
+                    fontSize: 13,
+                    color: "var(--pt-danger-icon)",
+                    fontWeight: 600,
+                  }}
+                >
+                  ⚠️ Exceeds remaining — {remainUnits} units (≈{remainMcg} mcg) left. Submit to confirm.
+                </div>
+              ) : null}
+            </div>
+
+            {/* Date — defaults to today, can backdate */}
+            <div className={formStyles.field}>
+              <label className={formStyles.label}>
+                Date <span style={{ fontWeight: 500, textTransform: "none", letterSpacing: 0, fontSize: 11 }}>(backdate if needed)</span>
+              </label>
+              <input
+                name="loggedAt"
+                type="date"
+                max={today}
+                value={loggedAt}
+                onChange={(e) => setLoggedAt(e.target.value)}
+                className={formStyles.input}
+              />
             </div>
 
             {/* Injection site — 4×2 button grid */}
@@ -229,16 +266,9 @@ export function LogDoseModal({
                   </button>
                 ))}
               </div>
-              {/* Hidden site field so FormData picks it up */}
               <input type="hidden" name="site" value={site} />
               {recentSites.length > 0 ? (
-                <div
-                  style={{
-                    background: "var(--pt-surface-soft)",
-                    borderRadius: 10,
-                    padding: "10px 14px",
-                  }}
-                >
+                <div style={{ background: "var(--pt-surface-soft)", borderRadius: 10, padding: "10px 14px" }}>
                   <div style={{ fontSize: 10, fontWeight: 700, color: "var(--pt-muted)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 6 }}>
                     Recent Rotation
                   </div>
@@ -330,28 +360,11 @@ export function LogDoseModal({
               />
             </div>
 
-            {overLimit ? (
-              <div
-                style={{
-                  background: "var(--pt-danger-bg)",
-                  border: "1.5px solid var(--pt-danger-border)",
-                  borderRadius: 12,
-                  padding: "12px 15px",
-                  fontSize: 13,
-                  color: "var(--pt-danger-icon)",
-                  fontWeight: 600,
-                  lineHeight: 1.5,
-                }}
-              >
-                Not enough left — {remainUnits} units (≈{remainMcg} mcg) remaining.
-              </div>
-            ) : null}
-
             <div style={{ display: "flex", gap: 10 }}>
               <button type="button" onClick={onClose} className={formStyles.buttonSecondary} style={{ flex: 1 }}>
                 Cancel
               </button>
-              <button type="submit" disabled={isPending || overLimit} className={formStyles.buttonPrimary} style={{ flex: 2 }}>
+              <button type="submit" disabled={isPending} className={formStyles.buttonPrimary} style={{ flex: 2 }}>
                 {isPending ? "Recording…" : "Record Dose"}
               </button>
             </div>
@@ -373,6 +386,14 @@ export function LogDoseModal({
 
       {activeWarning === "outlier" && state.warningData ? (
         <OutlierWarningModal
+          data={state.warningData}
+          onEdit={() => setWarningDismissed(true)}
+          onLogAnyway={() => formAction(buildConfirmedFormData())}
+        />
+      ) : null}
+
+      {activeWarning === "over_limit" && state.warningData ? (
+        <OverLimitWarningModal
           data={state.warningData}
           onEdit={() => setWarningDismissed(true)}
           onLogAnyway={() => formAction(buildConfirmedFormData())}

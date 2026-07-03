@@ -1,10 +1,10 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useState, useTransition } from "react";
 import { Modal, ModalHeader, ModalBody } from "@/components/ui/Modal";
 import formStyles from "@/components/ui/Form.module.css";
 import { PROTOCOL_PATTERNS, WEEKDAYS, COMMON_TIMEZONES, type ProtocolRow } from "@/lib/protocol-logic";
-import { saveProtocol, type ActionState } from "@/app/protocols/actions";
+import { saveProtocol, createQuickVial, type ActionState } from "@/app/protocols/actions";
 
 type VialOption = { id: string; name: string };
 
@@ -61,6 +61,45 @@ export function CreateProtocolModal({
   const [cycleOn, setCycleOn] = useState<string>(String(initialData?.cycle_on ?? 5));
   const [cycleOff, setCycleOff] = useState<string>(String(initialData?.cycle_off ?? 2));
 
+  // Vial selector — controlled so we can update it after inline quick-create
+  const [localVials, setLocalVials] = useState<VialOption[]>(vials ?? []);
+  const [selectedVialId, setSelectedVialId] = useState(defaultVialId);
+
+  // Inline quick-create vial state
+  const [creatingVial, setCreatingVial] = useState(false);
+  const [quickVialName, setQuickVialName] = useState("");
+  const [quickVialMg, setQuickVialMg] = useState("");
+  const [quickVialMl, setQuickVialMl] = useState("");
+  const [quickVialDose, setQuickVialDose] = useState("");
+  const [quickVialError, setQuickVialError] = useState<string | null>(null);
+  const [quickPending, startQuickTransition] = useTransition();
+
+  function handleCreateVial(e: React.FormEvent) {
+    e.preventDefault();
+    setQuickVialError(null);
+    startQuickTransition(async () => {
+      const result = await createQuickVial({
+        name: quickVialName,
+        mgInVial: parseFloat(quickVialMg) || 0,
+        mlLiquid: parseFloat(quickVialMl) || 0,
+        plannedDoseMcg: parseFloat(quickVialDose) || 0,
+      });
+      if (result.error) {
+        setQuickVialError(result.error);
+        return;
+      }
+      if (result.vial) {
+        setLocalVials((prev) => [...prev, result.vial!]);
+        setSelectedVialId(result.vial.id);
+        setCreatingVial(false);
+        setQuickVialName("");
+        setQuickVialMg("");
+        setQuickVialMl("");
+        setQuickVialDose("");
+      }
+    });
+  }
+
   function toggleDay(day: number) {
     setSelectedDays((prev) => (prev.includes(day) ? prev.filter((d) => d !== day) : [...prev, day].sort()));
   }
@@ -106,36 +145,139 @@ export function CreateProtocolModal({
           {/* Vial link */}
           <div className={formStyles.field}>
             <label className={formStyles.label}>Linked Vial <span style={{ fontWeight: 500, textTransform: "none", letterSpacing: 0, fontSize: 11 }}>(optional)</span></label>
-            {vials && vials.length > 0 ? (
-              <>
-                <select
-                  name="vialId"
-                  defaultValue={defaultVialId}
-                  className={formStyles.input}
-                  style={{ cursor: "pointer" }}
-                >
-                  <option value="">— No vial linked —</option>
-                  {vials.map((v) => (
-                    <option key={v.id} value={v.id}>{v.name}</option>
-                  ))}
-                </select>
-                <div style={{ fontSize: 11, color: "var(--pt-muted-2)", marginTop: 5 }}>
-                  Link a vial to log doses directly from this protocol and track inventory automatically.
-                </div>
-              </>
-            ) : (
-              <div
+            <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+              <select
+                name="vialId"
+                value={selectedVialId}
+                onChange={(e) => setSelectedVialId(e.target.value)}
+                className={formStyles.input}
+                style={{ cursor: "pointer", flex: 1 }}
+              >
+                <option value="">— No vial linked —</option>
+                {localVials.map((v) => (
+                  <option key={v.id} value={v.id}>{v.name}</option>
+                ))}
+              </select>
+              <button
+                type="button"
+                onClick={() => setCreatingVial((v) => !v)}
+                title="Create a new vial"
                 style={{
-                  fontSize: 12,
-                  color: "var(--pt-muted-2)",
-                  padding: "10px 14px",
-                  background: "var(--pt-surface-soft)",
+                  background: creatingVial ? "var(--pt-surface-soft)" : "var(--pt-accent-soft-bg)",
+                  border: `1.5px solid ${creatingVial ? "var(--pt-border-soft)" : "var(--pt-accent)"}`,
+                  color: creatingVial ? "var(--pt-muted)" : "var(--pt-accent)",
                   borderRadius: 10,
+                  width: 36,
+                  height: 36,
+                  flexShrink: 0,
+                  cursor: "pointer",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontWeight: 800,
+                  fontSize: 20,
                 }}
               >
-                No vials yet — create a vial in the Vials section first, then link it here.
-              </div>
-            )}
+                {creatingVial ? "×" : "+"}
+              </button>
+            </div>
+            <div style={{ fontSize: 11, color: "var(--pt-muted-2)", marginTop: 5 }}>
+              Link a vial to log doses from this protocol and track inventory automatically.
+            </div>
+
+            {/* Inline quick-create vial form */}
+            {creatingVial ? (
+              <form
+                onSubmit={handleCreateVial}
+                style={{
+                  marginTop: 12,
+                  padding: "14px 16px",
+                  background: "var(--pt-surface-soft)",
+                  borderRadius: 12,
+                  border: "1.5px solid var(--pt-border-soft)",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 10,
+                }}
+              >
+                <div style={{ fontSize: 12, fontWeight: 700, color: "var(--pt-accent)", marginBottom: 2 }}>
+                  Quick-Add Vial
+                </div>
+                {quickVialError ? (
+                  <div style={{ fontSize: 12, color: "var(--pt-danger-icon)" }}>{quickVialError}</div>
+                ) : null}
+                <input
+                  type="text"
+                  placeholder="Vial name (e.g. Mots-C #1)"
+                  value={quickVialName}
+                  onChange={(e) => setQuickVialName(e.target.value)}
+                  required
+                  className={formStyles.input}
+                  style={{ fontSize: 13 }}
+                />
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
+                  <div>
+                    <label style={{ fontSize: 10, fontWeight: 700, color: "var(--pt-muted)", textTransform: "uppercase", letterSpacing: "0.06em", display: "block", marginBottom: 4 }}>mg/vial</label>
+                    <input
+                      type="number"
+                      placeholder="e.g. 5"
+                      value={quickVialMg}
+                      onChange={(e) => setQuickVialMg(e.target.value)}
+                      min={0}
+                      step="any"
+                      required
+                      className={formStyles.input}
+                      style={{ fontSize: 13 }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: 10, fontWeight: 700, color: "var(--pt-muted)", textTransform: "uppercase", letterSpacing: "0.06em", display: "block", marginBottom: 4 }}>mL diluent</label>
+                    <input
+                      type="number"
+                      placeholder="e.g. 2"
+                      value={quickVialMl}
+                      onChange={(e) => setQuickVialMl(e.target.value)}
+                      min={0}
+                      step="any"
+                      required
+                      className={formStyles.input}
+                      style={{ fontSize: 13 }}
+                    />
+                  </div>
+                  <div>
+                    <label style={{ fontSize: 10, fontWeight: 700, color: "var(--pt-muted)", textTransform: "uppercase", letterSpacing: "0.06em", display: "block", marginBottom: 4 }}>dose (mcg)</label>
+                    <input
+                      type="number"
+                      placeholder="e.g. 250"
+                      value={quickVialDose}
+                      onChange={(e) => setQuickVialDose(e.target.value)}
+                      min={0}
+                      step="any"
+                      required
+                      className={formStyles.input}
+                      style={{ fontSize: 13 }}
+                    />
+                  </div>
+                </div>
+                <button
+                  type="submit"
+                  disabled={quickPending}
+                  style={{
+                    background: "var(--pt-accent)",
+                    color: "white",
+                    border: "none",
+                    borderRadius: 10,
+                    padding: "9px 14px",
+                    fontSize: 13,
+                    fontWeight: 700,
+                    cursor: "pointer",
+                    alignSelf: "flex-start",
+                  }}
+                >
+                  {quickPending ? "Creating…" : "Create & Link Vial"}
+                </button>
+              </form>
+            ) : null}
           </div>
 
           <div>

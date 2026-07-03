@@ -16,7 +16,13 @@ function getServerSnapshot() {
   return "light";
 }
 
-export function ThemeToggle({ className }: { className?: string }) {
+export function ThemeToggle({
+  className,
+  variant = "page",
+}: {
+  className?: string;
+  variant?: "header" | "page";
+}) {
   const theme = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
   function toggle() {
@@ -25,9 +31,22 @@ export function ThemeToggle({ className }: { className?: string }) {
     try {
       localStorage.setItem("pt-theme", next);
     } catch {
-      // localStorage unavailable (private mode etc.) — theme just won't persist.
+      // localStorage unavailable — theme won't persist across sessions.
     }
   }
+
+  const shellStyle =
+    variant === "header"
+      ? {
+          border: "1.5px solid rgba(255,255,255,0.15)",
+          background: "rgba(255,255,255,0.08)",
+          color: "white" as const,
+        }
+      : {
+          border: "1.5px solid var(--pt-border-soft)",
+          background: "var(--pt-surface-soft)",
+          color: "var(--pt-muted)" as const,
+        };
 
   return (
     <button
@@ -36,21 +55,19 @@ export function ThemeToggle({ className }: { className?: string }) {
       title={theme === "dark" ? "Switch to light mode" : "Switch to dark mode"}
       className={className}
       style={{
-        width: 30,
-        height: 30,
-        borderRadius: 8,
-        border: "1.5px solid rgba(255,255,255,0.15)",
-        background: "rgba(255,255,255,0.08)",
-        color: "white",
+        width: 34,
+        height: 34,
+        borderRadius: 9,
         cursor: "pointer",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         flexShrink: 0,
+        ...shellStyle,
       }}
     >
       {theme === "dark" ? (
-        <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
           <circle cx="8" cy="8" r="3.5" stroke="currentColor" strokeWidth="1.4" />
           <g stroke="currentColor" strokeWidth="1.4" strokeLinecap="round">
             <line x1="8" y1="0.5" x2="8" y2="2" />
@@ -64,7 +81,7 @@ export function ThemeToggle({ className }: { className?: string }) {
           </g>
         </svg>
       ) : (
-        <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+        <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
           <path
             d="M14 9.3A6.3 6.3 0 1 1 6.7 2a5 5 0 0 0 7.3 7.3z"
             stroke="currentColor"

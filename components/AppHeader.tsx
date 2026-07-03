@@ -68,7 +68,7 @@ export function AppHeader({
           </nav>
           <div className={styles.context}>{context}</div>
           <div className={styles.right}>
-            <ThemeToggle />
+            <ThemeToggle variant="header" />
             <span className={styles.email}>{email}</span>
             {/* Desktop: sign out button */}
             <form action={signOut} className={styles.signOutForm}>

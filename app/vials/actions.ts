@@ -117,11 +117,13 @@ export type WarningData = {
   avgMcg?: number;
   multiplier?: number;
   sampleCount?: number;
+  // over limit
+  remainingMcg?: number;
 };
 
 export type LogDoseState = ActionState & {
   depleted?: boolean;
-  warning?: "unit_mismatch" | "outlier";
+  warning?: "unit_mismatch" | "outlier" | "over_limit";
   warningData?: WarningData;
 };
 
@@ -140,9 +142,10 @@ export async function logDose(
   const tagsRaw = str(formData, "tags");
   const ratingInput = num(formData, "rating");
   const notes = str(formData, "notes") || null;
-  const unit = str(formData, "unit") || "mcg"; // 'mcg' | 'mg'
+  const unit = str(formData, "unit") || "mcg";
   const confirmed = formData.get("confirmed") === "true";
   const rawDose = num(formData, "mcgDose");
+  const loggedAtRaw = str(formData, "loggedAt");
 
   const [{ data: vial, error: vialError }, { data: doses, error: dosesError }, { data: customDevices }] =
     await Promise.all([
@@ -156,19 +159,26 @@ export async function logDose(
 
   const c = compute(vial, doses ?? [], customDevices ?? []);
 
-  // Convert to mcg for all internal math — if user typed in mg, multiply by 1000.
   const enteredValue = rawDose ?? vial.planned_dose_mcg;
   const mcgDose = unit === "mg" ? enteredValue * 1000 : enteredValue;
   if (!mcgDose || mcgDose <= 0) return { error: "Enter a dose amount." };
 
   const mlUsed = c.mcgPerMl > 0 ? mcgDose / c.mcgPerMl : 0;
-  if (mlUsed > c.remainingMl + 0.0001) {
-    return { error: "Not enough left in this vial for that dose." };
+
+  // Over-limit: warn the user before proceeding (skip check when confirmed)
+  if (!confirmed && mlUsed > c.remainingMl + 0.0001) {
+    return {
+      warning: "over_limit",
+      warningData: {
+        peptideName: vial.name,
+        enteredMcg: mcgDose,
+        remainingMcg: Math.max(0, c.remainingMl * c.mcgPerMl),
+      },
+    };
   }
 
   // --- Safety checks (skipped when user has already confirmed) ---
   if (!confirmed) {
-    // Fetch prior dose history for this peptide (exact case-insensitive name match).
     const { data: matchingVials } = await supabase
       .from("vials")
       .select("id")
@@ -176,7 +186,6 @@ export async function logDose(
       .ilike("name", vial.name);
 
     const matchingIds = (matchingVials ?? []).map((v) => v.id).filter((id) => id !== vialId);
-    // Also include existing doses on the current vial.
     const allIds = [vialId, ...matchingIds];
 
     const { data: priorDoses } = await supabase
@@ -185,7 +194,6 @@ export async function logDose(
       .in("vial_id", allIds);
 
     if (priorDoses && priorDoses.length > 0) {
-      // 1. Unit-convention mismatch check.
       const priorConventions = priorDoses.map((d) => d.unit_convention);
       const mostCommonPrior = priorConventions
         .sort((a, b) => priorConventions.filter((v) => v === b).length - priorConventions.filter((v) => v === a).length)[0];
@@ -202,7 +210,6 @@ export async function logDose(
         };
       }
 
-      // 2. Outlier dose check (≥3× the user's own rolling average for this peptide).
       const priorMcgDoses = priorDoses.map((d) => d.mcg_dose).filter(Boolean);
       if (priorMcgDoses.length > 0) {
         const avg = priorMcgDoses.reduce((s, x) => s + x, 0) / priorMcgDoses.length;
@@ -224,26 +231,33 @@ export async function logDose(
   }
   // --- End safety checks ---
 
+  // Cap ml_used at remaining to avoid negative inventory (confirmed over-limit)
+  const actualMlUsed = Math.min(mlUsed, c.remainingMl);
+
+  const loggedAt = loggedAtRaw
+    ? new Date(`${loggedAtRaw}T12:00:00`).toISOString()
+    : new Date().toISOString();
+
   const { data: newDose, error: insertError } = await supabase
     .from("dose_logs")
     .insert({
       vial_id: vialId,
       user_id: user.id,
       mcg_dose: mcgDose,
-      ml_used: mlUsed,
-      units_used: mlUsed * (c.device.unitsPerMl || 0),
+      ml_used: actualMlUsed,
+      units_used: actualMlUsed * (c.device.unitsPerMl || 0),
       site,
       notes,
       unit_convention: unit,
+      logged_at: loggedAt,
     })
     .select("id")
     .single();
   if (insertError) return { error: insertError.message };
 
-  // Persist effect tags + rating if the user filled any in.
   if (newDose?.id) {
     let tags: Record<string, boolean> = {};
-    try { tags = tagsRaw ? (JSON.parse(tagsRaw) as Record<string, boolean>) : {}; } catch { /* ignore malformed JSON */ }
+    try { tags = tagsRaw ? (JSON.parse(tagsRaw) as Record<string, boolean>) : {}; } catch { /* ignore */ }
     const hasEffects = Object.values(tags).some(Boolean) || (ratingInput != null && ratingInput > 0);
     if (hasEffects) {
       await supabase.from("dose_effects").insert({
@@ -255,7 +269,7 @@ export async function logDose(
     }
   }
 
-  const remainingAfter = c.remainingMl - mlUsed;
+  const remainingAfter = c.remainingMl - actualMlUsed;
   const depleted = remainingAfter <= 0.0001 && vial.effectiveness == null;
 
   revalidatePath("/");
