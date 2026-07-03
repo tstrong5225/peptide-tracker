@@ -11,6 +11,6 @@ jobs:
     steps:
       - name: Ping reminder cron endpoint
         run: |
-          curl -v -X GET \
+          curl --fail-with-body -sS -X GET \
             "${{ vars.APP_URL }}/api/cron/reminders" \
             -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"
