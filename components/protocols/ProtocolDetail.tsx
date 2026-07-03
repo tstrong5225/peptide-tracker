@@ -143,7 +143,7 @@ export function ProtocolDetail({
               </div>
               <button
                 type="button"
-                onClick={() => router.push(`/vials/${linkedVial.id}`)}
+                onClick={() => router.push(`/vials/${linkedVial.id}?logDose=1`)}
                 style={{
                   background: "var(--pt-accent)",
                   color: "white",

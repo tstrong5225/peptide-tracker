@@ -60,8 +60,8 @@ export async function GET(req: Request) {
     const [reminderH] = (p.reminder_time as string).split(":").map(Number);
     if (Number.isNaN(reminderH)) return false;
 
-    // Fire once per hour within the first 10 minutes
-    if (currentMinute > 10) return false;
+    // Fire within 50 minutes of the hour to survive GitHub Actions schedule drift
+    if (currentMinute > 50) return false;
 
     const tz = (p.reminder_timezone as string | null) ?? "UTC";
     const localH = getLocalHour(tz, now);

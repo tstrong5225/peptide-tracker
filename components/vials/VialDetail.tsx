@@ -22,18 +22,20 @@ export function VialDetail({
   vial,
   customDevices,
   lowVialThresholdPct,
+  initialShowLogModal,
 }: {
   email: string;
   isAdmin: boolean;
   vial: VialWithDoses;
   customDevices: DeviceRow[];
   lowVialThresholdPct: number;
+  initialShowLogModal?: boolean;
 }) {
   const router = useRouter();
   const [, startTransition] = useTransition();
 
   const [showAddModal, setShowAddModal] = useState(false);
-  const [showLogModal, setShowLogModal] = useState(false);
+  const [showLogModal, setShowLogModal] = useState(initialShowLogModal ?? false);
   const [showReconModal, setShowReconModal] = useState(false);
   const [showRateModal, setShowRateModal] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);

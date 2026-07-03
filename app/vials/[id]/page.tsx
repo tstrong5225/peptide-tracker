@@ -3,8 +3,15 @@ import { getCurrentUserOrRedirect } from "@/lib/get-current-user";
 import { VialDetail } from "@/components/vials/VialDetail";
 import type { DoseWithEffects, VialWithDoses } from "@/components/vials/types";
 
-export default async function VialDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function VialDetailPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ id: string }>;
+  searchParams: Promise<{ logDose?: string }>;
+}) {
   const { id } = await params;
+  const { logDose } = await searchParams;
   const { supabase, user, profile } = await getCurrentUserOrRedirect();
 
   const { data: vial } = await supabase.from("vials").select("*").eq("id", id).maybeSingle();
@@ -40,6 +47,7 @@ export default async function VialDetailPage({ params }: { params: Promise<{ id:
       vial={vialWithDoses}
       customDevices={customDevices ?? []}
       lowVialThresholdPct={profile?.low_vial_threshold_pct ?? 20}
+      initialShowLogModal={logDose === "1"}
     />
   );
 }
