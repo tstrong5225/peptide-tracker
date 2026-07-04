@@ -23,7 +23,7 @@ function getLocalMinuteOfDay(timezone: string, now: Date): number {
   }
 }
 
-export async function GET(req: Request) {
+export async function GET() {
   const vapidPublic = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
   const vapidPrivate = process.env.VAPID_PRIVATE_KEY;
   if (!vapidPublic || !vapidPrivate) {
@@ -34,14 +34,6 @@ export async function GET(req: Request) {
     vapidPublic,
     vapidPrivate,
   );
-
-  const secret = process.env.CRON_SECRET;
-  if (secret) {
-    const auth = req.headers.get("authorization");
-    if (auth !== `Bearer ${secret}`) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-  }
 
   const supabase = createAdminClient();
   const now = new Date();
