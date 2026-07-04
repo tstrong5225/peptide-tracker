@@ -67,8 +67,8 @@ export async function GET(req: Request) {
     const tz = (p.reminder_timezone as string | null) ?? "UTC";
     const currentTotalMin = getLocalMinuteOfDay(tz, now);
 
-    // Fire exactly once: the first cron run at or after the reminder time (within 5 min window)
-    if (currentTotalMin < reminderTotalMin || currentTotalMin >= reminderTotalMin + 5) return false;
+    // Exact-minute match — works with a 1-minute cron service (e.g. cron-job.org)
+    if (currentTotalMin !== reminderTotalMin) return false;
 
     // For xony, skip off days
     if (p.pattern === "xony") {
