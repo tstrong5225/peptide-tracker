@@ -6,17 +6,20 @@ import { isDoseDay, getProtocolStatus } from "@/lib/protocol-logic";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-function getLocalHour(timezone: string, now: Date): number {
+function getLocalMinuteOfDay(timezone: string, now: Date): number {
   try {
     const parts = new Intl.DateTimeFormat("en-US", {
       hour: "2-digit",
+      minute: "2-digit",
       hour12: false,
       timeZone: timezone,
     }).formatToParts(now);
-    const h = Number(parts.find((p) => p.type === "hour")?.value ?? "99");
-    return Number.isNaN(h) ? now.getUTCHours() : h;
+    const h = Number(parts.find((p) => p.type === "hour")?.value ?? "NaN");
+    const m = Number(parts.find((p) => p.type === "minute")?.value ?? "NaN");
+    if (Number.isNaN(h) || Number.isNaN(m)) return now.getUTCHours() * 60 + now.getUTCMinutes();
+    return h * 60 + m;
   } catch {
-    return now.getUTCHours();
+    return now.getUTCHours() * 60 + now.getUTCMinutes();
   }
 }
 
@@ -42,7 +45,6 @@ export async function GET(req: Request) {
 
   const supabase = createAdminClient();
   const now = new Date();
-  const currentMinute = now.getUTCMinutes();
 
   // Fetch all protocols with a reminder_time set
   const { data: protocols } = await supabase
@@ -52,22 +54,23 @@ export async function GET(req: Request) {
 
   if (!protocols || protocols.length === 0) return NextResponse.json({ sent: 0 });
 
-  // Filter to those whose reminder hour (in their stored timezone) matches the current time
+  // Match protocols whose reminder time falls within the current 5-minute cron window.
+  // e.g. reminder at 9:17 fires on the cron run where local time is in [9:17, 9:22).
   const due = protocols.filter((p) => {
     if (!p.reminder_time) return false;
     if (getProtocolStatus(p, now) !== "active") return false;
 
-    const [reminderH] = (p.reminder_time as string).split(":").map(Number);
+    const [reminderH, reminderM = 0] = (p.reminder_time as string).split(":").map(Number);
     if (Number.isNaN(reminderH)) return false;
-
-    // Fire within 50 minutes of the hour to survive GitHub Actions schedule drift
-    if (currentMinute > 50) return false;
+    const reminderTotalMin = reminderH * 60 + reminderM;
 
     const tz = (p.reminder_timezone as string | null) ?? "UTC";
-    const localH = getLocalHour(tz, now);
-    if (reminderH !== localH) return false;
+    const currentTotalMin = getLocalMinuteOfDay(tz, now);
 
-    // For xony, skip off days (compute in the protocol's timezone)
+    // Fire exactly once: the first cron run at or after the reminder time (within 5 min window)
+    if (currentTotalMin < reminderTotalMin || currentTotalMin >= reminderTotalMin + 5) return false;
+
+    // For xony, skip off days
     if (p.pattern === "xony") {
       const start = new Date(`${p.start_date as string}T00:00:00`);
       const todayStart = new Date(now);

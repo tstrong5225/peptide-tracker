@@ -2,7 +2,7 @@ name: Send dose reminders
 
 on:
   schedule:
-    - cron: "0 * * * *"   # every hour UTC (GitHub Actions, free tier)
+    - cron: "*/5 * * * *"  # every 5 minutes UTC (GitHub Actions minimum interval)
   workflow_dispatch:        # allow manual trigger from GitHub UI
 
 jobs:
