@@ -189,6 +189,41 @@ export function VialsDashboard({
 
       <main className={styles.main}>
         {dueReminders.length > 0 ? <ReminderBanner reminders={dueReminders} /> : null}
+
+        {/* Mobile-only toolbar: tab toggle + add button (header context is hidden on mobile) */}
+        <div className={styles.mobileToolbar}>
+          <div className={styles.mobileTabGroup}>
+            <button
+              type="button"
+              className={`${styles.mobileTabBtn} ${dashTab === "active" ? styles.mobileTabBtnActive : ""}`}
+              onClick={() => setDashTab("active")}
+            >
+              Active
+            </button>
+            <button
+              type="button"
+              className={`${styles.mobileTabBtn} ${dashTab === "archive" ? styles.mobileTabBtnActive : ""}`}
+              onClick={() => setDashTab("archive")}
+            >
+              Archive{archiveCount > 0 ? ` (${archiveCount})` : ""}
+            </button>
+          </div>
+          <button
+            type="button"
+            className={styles.mobileAddBtn}
+            onClick={() => {
+              setEditingVial(null);
+              setShowAddModal(true);
+            }}
+          >
+            <svg width="12" height="12" viewBox="0 0 13 13" fill="none">
+              <line x1="6.5" y1="1" x2="6.5" y2="12" stroke="white" strokeWidth="2.2" strokeLinecap="round" />
+              <line x1="1" y1="6.5" x2="12" y2="6.5" stroke="white" strokeWidth="2.2" strokeLinecap="round" />
+            </svg>
+            Add Vial
+          </button>
+        </div>
+
         {reorderItems.length > 0 ? (
           <div className={styles.reorderAlert} onClick={() => setShowReorderModal(true)}>
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
